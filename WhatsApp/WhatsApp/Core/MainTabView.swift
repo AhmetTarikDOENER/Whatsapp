@@ -55,7 +55,7 @@ struct MainTabView: View {
                     Image(systemName: Tabs.calls.icon)
                     Text(Tabs.calls.title)
                 }
-            placeholderItemView("Communities")
+            CommunityTabView()
                 .tabItem {
                     Image(systemName: Tabs.communities.icon)
                     Text(Tabs.communities.title)
