@@ -1,5 +1,59 @@
 import SwiftUI
 
+private struct CreateCallLinkSection: View {
+    var body: some View {
+        HStack {
+            Image(systemName: "link")
+                .padding(8)
+                .background(Color(.systemGray6))
+                .clipShape(Circle())
+                .foregroundStyle(.blue)
+            
+            VStack(alignment: .leading) {
+                Text("Create call link")
+                    .foregroundStyle(.blue)
+                
+                Text("Share a link for your WhatsApp calls.")
+                    .foregroundStyle(.gray)
+                    .font(.caption)
+            }
+        }
+    }
+}
+
+private struct RecentCallHistoryItemView: View {
+    var body: some View {
+        HStack {
+            Circle()
+                .frame(width: 45, height: 45)
+            
+            recentsCallTextView()
+            
+            Spacer()
+            
+            Text("Yesterday")
+                .foregroundStyle(.gray)
+                .font(.system(size: 16))
+            
+            Image(systemName: "info.circle")
+        }
+    }
+    
+    private func recentsCallTextView() -> some View {
+        VStack(alignment: .leading) {
+            Text("John Applause")
+            
+            HStack(spacing: 4) {
+                Image(systemName: "phone.arrow.up.right.fill")
+                
+                Text("Outgoing")
+            }
+            .font(.system(size: 14))
+            .foregroundStyle(.gray)
+        }
+    }
+}
+
 struct CallsTabView: View {
     
     @State private var searchText = ""
@@ -8,7 +62,20 @@ struct CallsTabView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section {
+                    CreateCallLinkSection()
+                }
                 
+                Section {
+                    ForEach(0 ..< 11, id: \.self) { _ in
+                        RecentCallHistoryItemView()
+                    }
+                } header: {
+                    Text("Recent")
+                        .textCase(nil)
+                        .font(.headline).bold()
+                        .foregroundStyle(.whatsAppBlack)
+                }
             }
             .navigationTitle("Calls")
             .searchable(text: $searchText)

@@ -50,7 +50,7 @@ struct MainTabView: View {
                     Image(systemName: Tabs.updates.icon)
                     Text(Tabs.updates.title)
                 }
-            placeholderItemView("Calls")
+            CallsTabView()
                 .tabItem {
                     Image(systemName: Tabs.calls.icon)
                     Text(Tabs.calls.title)
