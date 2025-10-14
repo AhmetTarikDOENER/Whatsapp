@@ -4,11 +4,11 @@ extension MainTabView {
     private enum Tabs: String {
         case updates, calls, communities, chats, settings
         
-        var title: String {
+        fileprivate var title: String {
             return rawValue.capitalized
         }
         
-        var icon: String {
+        fileprivate var icon: String {
             switch self {
             case .updates: return "circle.dashed.inset.filled"
             case .calls: return "phone"
@@ -18,37 +18,63 @@ extension MainTabView {
             }
         }
     }
+    
+    private func placeholderItemView(_ title: String) -> some View {
+        ScrollView {
+            ForEach(0 ..< 51, id: \.self) { _ in
+                VStack {
+                    Text(title)
+                        .font(.largeTitle)
+                }
+            }
+        }
+    }
 }
 
 struct MainTabView: View {
+    
+    //  MARK: - Init
+    init() {
+//        makeTabBarOpaque()
+    }
+    
+    //  MARK: - body
     var body: some View {
         TabView {
-            Text("Updates")
+            placeholderItemView("Updates")
                 .tabItem {
                     Image(systemName: Tabs.updates.icon)
                     Text(Tabs.updates.title)
                 }
-            Text("Calls")
+            placeholderItemView("Calls")
                 .tabItem {
                     Image(systemName: Tabs.calls.icon)
                     Text(Tabs.calls.title)
                 }
-            Text("Communities")
+            placeholderItemView("Communities")
                 .tabItem {
                     Image(systemName: Tabs.communities.icon)
                     Text(Tabs.communities.title)
                 }
-            Text("Chats")
+            placeholderItemView("Chats")
                 .tabItem {
                     Image(systemName: Tabs.chats.icon)
                     Text(Tabs.chats.title)
                 }
-            Text("Settings")
+            placeholderItemView("Settings")
                 .tabItem {
                     Image(systemName: Tabs.settings.icon)
                     Text(Tabs.settings.title)
                 }
         }
+    }
+    
+    //  MARK: - Private
+    private func makeTabBarOpaque() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
     }
 }
 
