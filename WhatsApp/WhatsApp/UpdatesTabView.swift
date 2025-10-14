@@ -94,10 +94,65 @@ private struct RecentsUpdatesItemView: View {
     }
 }
 
+private struct ChannelItemView: View {
+    var body: some View {
+        VStack {
+            Circle()
+                .frame(width: 55, height: 55)
+            
+            Text("Galatasaray F.K.")
+            
+            Button {
+                
+            } label: {
+                Text("Follow")
+                    .bold()
+                    .padding(5)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue.opacity(0.2))
+                    .clipShape(Capsule())
+            }
+        }
+        .padding(.horizontal)
+        .padding(.vertical)
+        .overlay {
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color(.systemGray4), lineWidth: 1)
+        }
+    }
+}
+
+private struct ChannelListView: View {
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Stay updated on topics that matter to you. Find channels to follow below")
+                .foregroundStyle(.gray)
+                .font(.caption)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(0 ..< 6, id: \.self) { _ in
+                        ChannelItemView()
+                    }
+                }
+            }
+            
+            Button("Explore More") { }
+                .tint(.blue)
+                .bold()
+                .buttonStyle(.borderedProminent)
+                .clipShape(Capsule())
+                .padding(.vertical)
+        }
+    }
+}
+
 struct UpdatesTabView: View {
     
+    //  MARK: - Properties
     @State private var searchText = ""
     
+    //  MARK: - Body
     var body: some View {
         NavigationStack {
             List {
@@ -111,6 +166,12 @@ struct UpdatesTabView: View {
                 } header: {
                     Text("Recent Updates")
                 }
+                
+                Section {
+                    ChannelListView()
+                } header: {
+                    makeChannelSectionHeader()
+                }
             }
             .listStyle(.grouped)
             .navigationTitle("Updates")
@@ -119,9 +180,31 @@ struct UpdatesTabView: View {
     }
 }
 
+//  MARK: - UpdatesTabView+Extension
 extension UpdatesTabView {
     enum Constant {
         static let imageDimension: CGFloat = 55
+    }
+    
+    private func makeChannelSectionHeader() -> some View {
+        HStack {
+            Text("Channels")
+                .bold()
+                .font(.title3)
+                .textCase(nil)
+                .foregroundStyle(.whatsAppBlack)
+            
+            Spacer()
+            
+            Button {
+                
+            } label: {
+                Image(systemName: "plus")
+                    .padding(12)
+                    .background(Color(.systemGray5))
+                    .clipShape(Circle())
+            }
+        }
     }
 }
 

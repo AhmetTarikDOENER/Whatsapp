@@ -45,7 +45,7 @@ struct MainTabView: View {
     //  MARK: - body
     var body: some View {
         TabView {
-            placeholderItemView("Updates")
+            UpdatesTabView()
                 .tabItem {
                     Image(systemName: Tabs.updates.icon)
                     Text(Tabs.updates.title)
