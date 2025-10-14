@@ -1,5 +1,6 @@
 import SwiftUI
 
+//  MARK: - MainTabView+Extension
 extension MainTabView {
     private enum Tabs: String {
         case updates, calls, communities, chats, settings
@@ -24,7 +25,10 @@ extension MainTabView {
             ForEach(0 ..< 51, id: \.self) { _ in
                 VStack {
                     Text(title)
-                        .font(.largeTitle)
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 120)
+                        .background(Color.green.opacity(0.5))
                 }
             }
         }
@@ -35,7 +39,7 @@ struct MainTabView: View {
     
     //  MARK: - Init
     init() {
-//        makeTabBarOpaque()
+        makeTabBarOpaque()
     }
     
     //  MARK: - body
