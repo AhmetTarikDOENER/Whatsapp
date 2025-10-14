@@ -1,0 +1,39 @@
+import SwiftUI
+
+struct SettingsItemView: View {
+    
+    let item: SettingsItem
+    
+    var body: some View {
+        HStack {
+            iconImageView()
+                .frame(width: 30, height: 30)
+                .foregroundStyle(.white)
+                .background(item.backgroundColor)
+                .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+            
+            Text(item.title)
+                .font(.system(size: 20))
+            
+            Spacer()
+        }
+    }
+    
+    @ViewBuilder
+    private func iconImageView() -> some View {
+        switch item.imageType {
+        case .systemImage:
+            Image(systemName: item.imageName)
+                .bold()
+                .font(.callout)
+        case .assetImage:
+            Image(item.imageName)
+                .renderingMode(.template)
+                .padding(4)
+        }
+    }
+}
+
+#Preview {
+    SettingsItemView(item: .chats)
+}
