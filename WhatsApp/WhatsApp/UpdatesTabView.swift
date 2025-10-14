@@ -27,7 +27,10 @@ private struct StatusSection: View {
     var body: some View {
         HStack {
             Circle()
-                .frame(width: 60, height: 60)
+                .frame(
+                    width: UpdatesTabView.Constant.imageDimension,
+                    height: UpdatesTabView.Constant.imageDimension
+                )
             
             VStack(alignment: .leading) {
                 Text("My Status")
@@ -70,6 +73,27 @@ private struct StatusSection: View {
     }
 }
 
+private struct RecentsUpdatesItemView: View {
+    var body: some View {
+        HStack {
+            Circle()
+                .frame(
+                    width: UpdatesTabView.Constant.imageDimension,
+                    height: UpdatesTabView.Constant.imageDimension
+                )
+            
+            VStack(alignment: .leading) {
+                Text("John Applause")
+                    .font(.callout).bold()
+                
+                Text("1h ago")
+                    .foregroundStyle(.gray)
+                    .font(.system(size: 15))
+            }
+        }
+    }
+}
+
 struct UpdatesTabView: View {
     
     @State private var searchText = ""
@@ -79,12 +103,25 @@ struct UpdatesTabView: View {
             List {
                 StatusSectionHeader()
                     .listRowBackground(Color.clear)
+                
                 StatusSection()
+                
+                Section {
+                    RecentsUpdatesItemView()
+                } header: {
+                    Text("Recent Updates")
+                }
             }
             .listStyle(.grouped)
             .navigationTitle("Updates")
             .searchable(text: $searchText)
         }
+    }
+}
+
+extension UpdatesTabView {
+    enum Constant {
+        static let imageDimension: CGFloat = 55
     }
 }
 
