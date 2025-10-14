@@ -10,7 +10,7 @@ struct ChannelTabView: View {
                 archivedButton()
                 
                 ForEach(0 ..< 5, id: \.self) { _ in
-                    SuggestedChannelItemView()
+                    ChannelItemView()
                 }
                 
                 makeInboxFooterView()

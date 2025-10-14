@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct SuggestedChannelItemView: View {
+struct ChannelItemView: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             Circle()
@@ -36,5 +36,5 @@ struct SuggestedChannelItemView: View {
 }
 
 #Preview {
-    SuggestedChannelItemView()
+    ChannelItemView()
 }
