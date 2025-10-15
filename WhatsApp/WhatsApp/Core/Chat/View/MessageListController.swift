@@ -1,4 +1,5 @@
 import UIKit
+import SwiftUI
 
 final class MessageListController: UIViewController {
     
@@ -38,6 +39,14 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
         cell.backgroundColor = UIColor.gray.withAlphaComponent(0.1)
+        cell.contentConfiguration = UIHostingConfiguration {
+            Text("PLACEHOLDER")
+                .font(.largeTitle)
+                .bold()
+                .frame(maxWidth: .infinity)
+                .frame(height: 200)
+                .background(.gray.opacity(0.1))
+        }
         
         return cell
     }
