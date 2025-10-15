@@ -9,6 +9,7 @@ struct ChatroomView: View {
                 makeLeadingNavigationItems()
                 makeTrailingNavigationGroupItems()
             }
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
             .safeAreaInset(edge: .bottom) {
                 TextInputArea()

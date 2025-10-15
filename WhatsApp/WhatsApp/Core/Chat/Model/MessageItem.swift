@@ -36,6 +36,7 @@ extension MessageItem {
         .init(text: "Hi, There!", direction: .outgoing, messageType: .text),
         .init(text: "Check this photo", direction: .incoming, messageType: .photo),
         .init(text: "Watch this video", direction: .outgoing, messageType: .video),
+        .init(text: "Listen to this", direction: .incoming, messageType: .audio),
     ]
 }
 
@@ -49,5 +50,5 @@ enum MessageDirection: String, CaseIterable {
 }
 
 enum MessageType: String, CaseIterable {
-    case text, photo, video
+    case text, photo, video, audio
 }
