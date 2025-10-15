@@ -21,7 +21,7 @@ struct AuthButton: View {
             onTap()
         } label: {
             HStack {
-                Text("Login")
+                Text(title)
                 
                 Image(systemName: "arrow.right")
             }

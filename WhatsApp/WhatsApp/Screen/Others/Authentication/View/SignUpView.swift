@@ -20,7 +20,7 @@ struct SignUpView: View {
             AuthTextField(text: $authViewModel.password, type: .password)
             
             AuthButton(title: "Create an Account") {
-                
+                Task { await authViewModel.handleSignUp() }
             }
             .disabled(authViewModel.disableSignUpButton)
             
