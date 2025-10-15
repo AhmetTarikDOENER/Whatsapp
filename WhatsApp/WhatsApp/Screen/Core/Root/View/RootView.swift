@@ -9,8 +9,8 @@ struct RootView: View {
         case .pending:
             ProgressView()
                 .controlSize(.large)
-        case .loggedIn:
-            MainTabView()
+        case .loggedIn(let loggedInUser):
+            MainTabView(loggedInUser)
         case .loggedOut:
             LoginView()
         }

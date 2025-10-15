@@ -12,6 +12,8 @@ struct User: Identifiable, Hashable, Decodable {
 }
 
 extension User {
+    static let placeholderUser = User(uid: "1", username: "sampleUser", email: "sample@gmail.com")
+    
     init(dictionary: [String: Any]) {
         self.uid = dictionary[.uid] as? String ?? ""
         self.username = dictionary[.username] as? String ?? ""

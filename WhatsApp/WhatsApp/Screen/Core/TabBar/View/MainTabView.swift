@@ -1,44 +1,13 @@
 import SwiftUI
 
-//  MARK: - MainTabView+Extension
-extension MainTabView {
-    private enum Tabs: String {
-        case updates, calls, communities, chats, settings
-        
-        fileprivate var title: String {
-            return rawValue.capitalized
-        }
-        
-        fileprivate var icon: String {
-            switch self {
-            case .updates: return "circle.dashed.inset.filled"
-            case .calls: return "phone"
-            case .communities: return "person.3"
-            case .chats: return "message"
-            case .settings: return "gear"
-            }
-        }
-    }
-    
-    private func placeholderItemView(_ title: String) -> some View {
-        ScrollView {
-            ForEach(0 ..< 51, id: \.self) { _ in
-                VStack {
-                    Text(title)
-                        .bold()
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 120)
-                        .background(Color.green.opacity(0.5))
-                }
-            }
-        }
-    }
-}
-
 struct MainTabView: View {
     
+    //  MARK: - Property
+    private let currentUser: User
+    
     //  MARK: - Init
-    init() {
+    init(_ currentUser: User) {
+        self.currentUser = currentUser
         makeTabBarOpaque()
         let thumbImage = UIImage(systemName: "circle.fill")
         UISlider.appearance().setThumbImage(thumbImage, for: .normal)
@@ -84,6 +53,42 @@ struct MainTabView: View {
     }
 }
 
+//  MARK: - MainTabView+Extension
+extension MainTabView {
+    private enum Tabs: String {
+        case updates, calls, communities, chats, settings
+        
+        fileprivate var title: String {
+            return rawValue.capitalized
+        }
+        
+        fileprivate var icon: String {
+            switch self {
+            case .updates: return "circle.dashed.inset.filled"
+            case .calls: return "phone"
+            case .communities: return "person.3"
+            case .chats: return "message"
+            case .settings: return "gear"
+            }
+        }
+    }
+    
+    private func placeholderItemView(_ title: String) -> some View {
+        ScrollView {
+            ForEach(0 ..< 51, id: \.self) { _ in
+                VStack {
+                    Text(title)
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 120)
+                        .background(Color.green.opacity(0.5))
+                }
+            }
+        }
+    }
+}
+
+
 #Preview {
-    MainTabView()
+    MainTabView(.placeholderUser)
 }
