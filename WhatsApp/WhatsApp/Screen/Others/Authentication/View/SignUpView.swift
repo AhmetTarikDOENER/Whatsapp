@@ -2,6 +2,9 @@ import SwiftUI
 
 struct SignUpView: View {
     
+    @Environment(\.dismiss) private var dismiss
+    @ObservedObject var authViewModel: AuthViewModel
+    
     //  MARK: - Body
     var body: some View {
         VStack {
@@ -9,16 +12,17 @@ struct SignUpView: View {
             
             AuthHeaderView()
             
-            AuthTextField(text: .constant(""), type: .email)
+            AuthTextField(text: $authViewModel.email, type: .email)
             
             let usernameType = AuthTextField.InputType.custom("Username", "at")
-            AuthTextField(text: .constant(""), type: usernameType)
+            AuthTextField(text: $authViewModel.username, type: usernameType)
             
-            AuthTextField(text: .constant(""), type: .password)
+            AuthTextField(text: $authViewModel.password, type: .password)
             
             AuthButton(title: "Create an Account") {
                 
             }
+            .disabled(authViewModel.disableSignUpButton)
             
             Spacer()
             
@@ -40,7 +44,7 @@ struct SignUpView: View {
     //  MARK: - Private
     private func backButton() -> some View {
         Button {
-            
+            dismiss()
         } label: {
             HStack {
                 Image(systemName: "sparkles")
@@ -56,5 +60,5 @@ struct SignUpView: View {
 }
 
 #Preview {
-    SignUpView()
+    SignUpView(authViewModel: .init())
 }
