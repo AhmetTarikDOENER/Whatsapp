@@ -84,8 +84,8 @@ final class AuthService: AuthServiceProtocol {
 extension AuthService {
     private func saveUserInfoToDatabase(user: User) async throws {
         do {
-            let userDictionary = ["uid": user.uid, "username": user.username, "email": user.email]
-            try await Database.database().reference().child("users").child(user.uid).setValue(userDictionary)
+            let userDictionary: [String: Any] = [.uid: user.uid, .username: user.username, .email: user.email]
+            try await FirebaseConstants.UserReference.child(user.uid).setValue(userDictionary)
         } catch {
             print("🔐 Failed to save user data to database: \(error.localizedDescription)")
             throw AuthError.failedToSaveUserData(error.localizedDescription)
@@ -94,7 +94,7 @@ extension AuthService {
     
     private func fetchUserInfoFromDatabase() {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
-        Database.database().reference().child("users").child(currentUid).observe(.value) { [weak self] snapshot in
+        FirebaseConstants.UserReference.child(currentUid).observe(.value) { [weak self] snapshot in
             guard let userDictionary = snapshot.value as? [String: Any] else { return }
             let loggedInUser = User(dictionary: userDictionary)
             self?.authState.send(.loggedIn(loggedInUser))
