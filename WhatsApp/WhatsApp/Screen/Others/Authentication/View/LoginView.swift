@@ -31,6 +31,12 @@ struct LoginView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.teal.gradient)
             .ignoresSafeArea()
+            .alert(isPresented: $authViewModel.errorState.showError) {
+                Alert(
+                    title: Text(authViewModel.errorState.errorMessage),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
         }
     }
     

@@ -7,6 +7,20 @@ enum AuthState {
     case pending, loggedIn, loggedOut
 }
 
+enum AuthError: Error {
+    case accountCreationFailed(_ description: String)
+    case failedToSaveUserData(_ description: String)
+}
+
+extension AuthError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .accountCreationFailed(let description): return description
+        case .failedToSaveUserData(let description): return description
+        }
+    }
+}
+
 //  MARK: - Protocol
 protocol AuthServiceProtocol {
     static var shared: AuthServiceProtocol { get }
@@ -38,10 +52,15 @@ final class AuthService: AuthServiceProtocol {
     }
     
     func createAccount(for username: String, with email: String, and password: String) async throws {
-        let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
-        let uid = authResult.user.uid
-        let newUser = User(uid: uid, username: username, email: email)
-        try await saveUserInfoToDatabase(user: newUser)
+        do {
+            let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
+            let uid = authResult.user.uid
+            let newUser = User(uid: uid, username: username, email: email)
+            try await saveUserInfoToDatabase(user: newUser)
+        } catch {
+            print("🔐 Failed to create an account: \(error.localizedDescription)")
+            throw AuthError.accountCreationFailed(error.localizedDescription)
+        }
     }
     
     func logout() async throws {
@@ -51,7 +70,12 @@ final class AuthService: AuthServiceProtocol {
 
 extension AuthService {
     private func saveUserInfoToDatabase(user: User) async throws {
-        let userDictionary = ["uid": user.uid, "username": user.username, "email": user.email]
-        try await Database.database().reference().child("users").child(user.uid).setValue(userDictionary)
+        do {
+            let userDictionary = ["uid": user.uid, "username": user.username, "email": user.email]
+            try await Database.database().reference().child("users").child(user.uid).setValue(userDictionary)
+        } catch {
+            print("🔐 Failed to save user data to database: \(error.localizedDescription)")
+            throw AuthError.failedToSaveUserData(error.localizedDescription)
+        }
     }
 }
