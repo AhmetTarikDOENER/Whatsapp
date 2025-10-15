@@ -1,5 +1,6 @@
 import Foundation
 
+@MainActor
 final class AuthViewModel: ObservableObject {
     
     //  MARK: - Properties
@@ -17,7 +18,6 @@ final class AuthViewModel: ObservableObject {
         email.isEmpty || password.isEmpty || username.isEmpty || isLoading
     }
     
-    @MainActor
     func handleSignUp() async {
         isLoading = true
         do {

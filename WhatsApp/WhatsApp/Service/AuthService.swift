@@ -4,7 +4,7 @@ import FirebaseDatabase
 
 //  MARK: - Auth States
 enum AuthState {
-    case pending, loggedIn, loggedOut
+    case pending, loggedIn(User), loggedOut
 }
 
 enum AuthError: Error {
@@ -57,6 +57,7 @@ final class AuthService: AuthServiceProtocol {
             let uid = authResult.user.uid
             let newUser = User(uid: uid, username: username, email: email)
             try await saveUserInfoToDatabase(user: newUser)
+            self.authState.send(.loggedIn(newUser))
         } catch {
             print("🔐 Failed to create an account: \(error.localizedDescription)")
             throw AuthError.accountCreationFailed(error.localizedDescription)
