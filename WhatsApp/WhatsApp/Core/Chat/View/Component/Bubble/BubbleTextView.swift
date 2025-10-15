@@ -9,13 +9,13 @@ struct BubbleTextView: View {
             Text("Hi Jen! How're you today?")
                 .padding(12)
                 .background(item.backgroundColor)
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .applyTail(item.direction)
             
             timeStampTextView()
         }
         .shadow(
-            color: Color(.systemGray3).opacity(0.1),
+            color: Color(.systemGray3).opacity(0.4),
             radius: 5, x: 0, y: 20
         )
         .frame(maxWidth: .infinity, alignment: item.alignment)
