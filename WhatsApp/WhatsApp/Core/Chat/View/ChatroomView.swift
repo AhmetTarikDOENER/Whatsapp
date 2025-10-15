@@ -15,10 +15,13 @@ struct ChatroomView: View {
                         .background(Color.gray.opacity(0.1))
                 }
             }
-            .toolbar {
-                makeLeadingNavigationItems()
-                makeTrailingNavigationGroupItems()
-            }
+        }
+        .toolbar {
+            makeLeadingNavigationItems()
+            makeTrailingNavigationGroupItems()
+        }
+        .safeAreaInset(edge: .bottom) {
+            TextInputArea()
         }
     }
 }
