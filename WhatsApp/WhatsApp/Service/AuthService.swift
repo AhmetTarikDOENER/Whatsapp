@@ -71,7 +71,13 @@ final class AuthService: AuthServiceProtocol {
     }
     
     func logout() async throws {
-        
+        do {
+            try Auth.auth().signOut()
+            authState.send(.loggedOut)
+            print("Successfully logged out.")
+        } catch {
+            print("Failed to log out current user: \(error.localizedDescription)")
+        }
     }
 }
 

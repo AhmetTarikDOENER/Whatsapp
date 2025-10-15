@@ -68,6 +68,22 @@ struct SettingsTabView: View {
             }
             .navigationTitle("Settings")
             .searchable(text: $searchText)
+            .toolbar {
+                makeLeadingNavigationItem()
+            }
+        }
+    }
+}
+
+extension SettingsTabView {
+    
+    @ToolbarContentBuilder
+    private func makeLeadingNavigationItem() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button("Sign Out") {
+                Task { try await AuthService.shared.logout() }
+            }
+            .foregroundStyle(.red)
         }
     }
 }
