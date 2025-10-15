@@ -20,6 +20,7 @@ struct ChatroomView: View {
             makeLeadingNavigationItems()
             makeTrailingNavigationGroupItems()
         }
+        .toolbar(.hidden, for: .tabBar)
         .safeAreaInset(edge: .bottom) {
             TextInputArea()
         }
