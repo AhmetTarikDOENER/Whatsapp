@@ -43,7 +43,7 @@ struct LoginView: View {
     
     private func signupButton() -> some View {
         NavigationLink {
-            Text("Sign up view placeholder")
+            SignUpView()
         } label: {
             HStack {
                 Image(systemName: "sparkles")
