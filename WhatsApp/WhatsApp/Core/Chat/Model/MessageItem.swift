@@ -8,6 +8,14 @@ struct MessageItem: Identifiable {
     var backgroundColor: Color {
         return direction == .outgoing ? Color.bubbleGreen : .bubbleWhite
     }
+    
+    var alignment: Alignment {
+        return direction == .incoming ? .leading : .trailing
+    }
+    
+    var horizontalAlignment: HorizontalAlignment {
+        return direction == .incoming ? .leading : .trailing
+    }
 }
 
 extension MessageItem {
