@@ -13,7 +13,14 @@ struct LoginView: View {
                 
                 forgotPasswordButton()
                 
+                AuthButton(title: "Login in now") {
+                    
+                }
+                
                 Spacer()
+                
+                signupButton()
+                    .padding(.bottom, 32)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.teal.gradient)
@@ -31,6 +38,22 @@ struct LoginView: View {
                 .padding(.trailing, 32)
                 .bold()
                 .padding(.vertical)
+        }
+    }
+    
+    private func signupButton() -> some View {
+        NavigationLink {
+            Text("Sign up view placeholder")
+        } label: {
+            HStack {
+                Image(systemName: "sparkles")
+                
+                Text("Don't have an account? ") +
+                Text("Create one").bold()
+                
+                Image(systemName: "sparkles")
+            }
+            .foregroundStyle(.white)
         }
     }
 }
