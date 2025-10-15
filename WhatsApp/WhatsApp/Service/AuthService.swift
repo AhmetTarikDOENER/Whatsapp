@@ -40,7 +40,9 @@ final class AuthService: AuthServiceProtocol {
     
     //  MARK: - Init
     static let shared: AuthServiceProtocol = AuthService()
-    private init() {}
+    private init() {
+        Task { await autoLogin() }
+    }
     
     //  MARK: - Internal
     func login(with email: String, and password: String) async throws {
@@ -48,7 +50,11 @@ final class AuthService: AuthServiceProtocol {
     }
     
     func autoLogin() async {
-        
+        if Auth.auth().currentUser == nil {
+            authState.send(.loggedOut)
+        } else {
+            fetchUserInfoFromDatabase()
+        }
     }
     
     func createAccount(for username: String, with email: String, and password: String) async throws {
@@ -59,7 +65,7 @@ final class AuthService: AuthServiceProtocol {
             try await saveUserInfoToDatabase(user: newUser)
             self.authState.send(.loggedIn(newUser))
         } catch {
-            print("🔐 Failed to create an account: \(error.localizedDescription)")
+            print("🔐 Failed to create an account\n: \(error.localizedDescription)")
             throw AuthError.accountCreationFailed(error.localizedDescription)
         }
     }
@@ -77,6 +83,18 @@ extension AuthService {
         } catch {
             print("🔐 Failed to save user data to database: \(error.localizedDescription)")
             throw AuthError.failedToSaveUserData(error.localizedDescription)
+        }
+    }
+    
+    private func fetchUserInfoFromDatabase() {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        Database.database().reference().child("users").child(currentUid).observe(.value) { [weak self] snapshot in
+            guard let userDictionary = snapshot.value as? [String: Any] else { return }
+            let loggedInUser = User(dictionary: userDictionary)
+            self?.authState.send(.loggedIn(loggedInUser))
+            print("\(loggedInUser.username) is logged in.")
+        } withCancel: { error in
+            print("Failed to get current user info")
         }
     }
 }
