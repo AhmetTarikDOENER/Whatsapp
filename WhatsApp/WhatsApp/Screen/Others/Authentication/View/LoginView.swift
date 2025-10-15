@@ -19,7 +19,7 @@ struct LoginView: View {
                 forgotPasswordButton()
                 
                 AuthButton(title: "Login in now") {
-                    
+                    Task { await authViewModel.handleLogin() }
                 }
                 .disabled(authViewModel.disableLoginButton)
                 

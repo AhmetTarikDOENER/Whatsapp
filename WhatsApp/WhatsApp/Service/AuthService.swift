@@ -10,6 +10,7 @@ enum AuthState {
 enum AuthError: Error {
     case accountCreationFailed(_ description: String)
     case failedToSaveUserData(_ description: String)
+    case emailLoginFailed(_ description: String)
 }
 
 extension AuthError: LocalizedError {
@@ -17,6 +18,7 @@ extension AuthError: LocalizedError {
         switch self {
         case .accountCreationFailed(let description): return description
         case .failedToSaveUserData(let description): return description
+        case .emailLoginFailed(let description): return description
         }
     }
 }
@@ -46,7 +48,14 @@ final class AuthService: AuthServiceProtocol {
     
     //  MARK: - Internal
     func login(with email: String, and password: String) async throws {
-        
+        do {
+            let authResult = try await Auth.auth().signIn(withEmail: email, password: password)
+            fetchUserInfoFromDatabase()
+            print("Successfully signed in \(authResult.user.email ?? "")")
+        } catch {
+            print("Failed to sign into the account with: \(email)")
+            throw AuthError.emailLoginFailed(error.localizedDescription)
+        }
     }
     
     func autoLogin() async {

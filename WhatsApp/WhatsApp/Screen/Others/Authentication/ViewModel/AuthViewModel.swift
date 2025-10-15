@@ -28,4 +28,15 @@ final class AuthViewModel: ObservableObject {
             isLoading = false
         }
     }
+    
+    func handleLogin() async {
+        isLoading = true
+        do {
+            try await AuthService.shared.login(with: email, and: password)
+        } catch {
+            errorState.errorMessage = "Failed to login:\n \(error.localizedDescription)"
+            errorState.showError = true
+            isLoading = false
+        }
+    }
 }
