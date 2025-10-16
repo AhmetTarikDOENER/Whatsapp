@@ -9,11 +9,14 @@ enum ChannelConstants {
     static let maxGroupParticipants = 12
 }
 
+@MainActor
 final class ChatPartnerPickerViewModel: ObservableObject {
     
     //  MARK: - Properties
     @Published var navigationStack = [ChannelCreationRoute]()
     @Published var selectedChatPartners = [User]()
+    @Published private(set) var users = [User]()
+    private var lastCursor: String?
     
     var showSelectedUsers: Bool {
         !selectedChatPartners.isEmpty
@@ -21,6 +24,10 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     
     var disableNextButton: Bool {
         selectedChatPartners.isEmpty
+    }
+    
+    init() {
+        Task { await fetchUser() }
     }
     
     //  MARK: - Internal
@@ -36,5 +43,16 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     func isUserSelected(_ user: User) -> Bool {
         let isSelected = selectedChatPartners.contains { $0.uid == user.uid }
         return isSelected
+    }
+    
+    func fetchUser() async {
+        do {
+            let userNode = try await UserService.paginateUsers(lastCursor: lastCursor, pageSize: 5)
+            self.users = userNode.users
+            self.lastCursor = userNode.currentCursor
+            print("lastCursor: \(String(describing: lastCursor))")
+        } catch {
+            print("Failed to fetch users in ChatPartnerPickerViewModel")
+        }
     }
 }
