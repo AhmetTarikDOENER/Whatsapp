@@ -3,6 +3,7 @@ import SwiftUI
 struct SelectedChatPartnerView: View {
     
     let users: [User]
+    let onTapHandler: (_ user: User) -> Void
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -20,16 +21,16 @@ struct SelectedChatPartnerView: View {
                 .fill(Color(.systemGray4))
                 .frame(width: 60, height: 60)
                 .overlay(alignment: .topTrailing) {
-                    cancelButton()
+                    cancelButton(user)
                 }
             
             Text(user.username)
         }
     }
     
-    private func cancelButton() -> some View {
+    private func cancelButton(_ user: User) -> some View {
         Button {
-            
+            onTapHandler(user)
         } label: {
             Image(systemName: "xmark")
                 .imageScale(.small)
@@ -43,5 +44,7 @@ struct SelectedChatPartnerView: View {
 }
 
 #Preview {
-    SelectedChatPartnerView(users: User.placeholders)
+    SelectedChatPartnerView(users: User.placeholders) { user in
+        
+    }
 }
