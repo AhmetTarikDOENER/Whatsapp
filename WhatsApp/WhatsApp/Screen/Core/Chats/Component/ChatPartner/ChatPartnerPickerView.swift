@@ -19,24 +19,42 @@ enum ChatPartnerPickerOption: String, CaseIterable, Identifiable {
 }
 
 struct ChatPartnerPickerView: View {
+    
+    @State private var searchText = ""
+    @Environment(\.dismiss) private var dismiss
+    
     var body: some View {
         NavigationStack {
             List {
                 ForEach(ChatPartnerPickerOption.allCases) { item in
-                    ChatPartnerHeaderItemView(item: item)
+                    ChatPartnerHeaderSectionItemView(item: item)
+                }
+                
+                Section {
+                    ForEach(0 ..< 11) { _ in
+                        ChatPartnerRowView(user: .placeholderUser)
+                    }
+                } header: {
+                    Text("Contacts on WhatsApp")
+                        .textCase(nil)
+                        .bold()
                 }
             }
             .navigationTitle("New Chat")
             .navigationBarTitleDisplayMode(.inline)
+            .searchable(text: $searchText, prompt: "Search name or number")
+            .toolbar {
+                makeTrailingNavigationItem()
+            }
         }
     }
 }
 
-//  MARK: - ChatPartnerPickerView
+//  MARK: - ChatPartnerPickerView+Extension
 extension ChatPartnerPickerView {
     
     //  MARK: - ChatPartnerHeaderItemView
-    private struct ChatPartnerHeaderItemView: View {
+    private struct ChatPartnerHeaderSectionItemView: View {
         
         let item: ChatPartnerPickerOption
         
@@ -56,7 +74,30 @@ extension ChatPartnerPickerView {
                     .frame(width: 40, height: 40)
                     .background(Color(.systemGray6))
                     .clipShape(Circle())
+                
+                Text(item.title)
             }
+        }
+    }
+    
+    @ToolbarContentBuilder
+    private func makeTrailingNavigationItem() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            cancelButton()
+        }
+    }
+    
+    private func cancelButton() -> some View {
+        Button {
+            dismiss()
+        } label: {
+            Image(systemName: "xmark")
+                .font(.footnote)
+                .bold()
+                .foregroundStyle(.gray)
+                .padding(10)
+                .background(Color(.systemGray5))
+                .clipShape(Circle())
         }
     }
 }
