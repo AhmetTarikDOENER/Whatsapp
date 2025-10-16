@@ -31,5 +31,5 @@ struct ChatPartnerRowView<Content: View>: View {
 }
 
 #Preview {
-    ChatPartnerRowView(user: .placeholderUser)
+    ChatPartnerRowView(user: .placeholders[0])
 }

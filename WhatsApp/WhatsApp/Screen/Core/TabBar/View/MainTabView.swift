@@ -90,5 +90,5 @@ extension MainTabView {
 
 
 #Preview {
-    MainTabView(.placeholderUser)
+    MainTabView(.placeholders[0])
 }

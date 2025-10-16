@@ -36,7 +36,7 @@ struct ChatPartnerPickerView: View {
                 
                 Section {
                     ForEach(0 ..< 11) { _ in
-                        ChatPartnerRowView(user: .placeholderUser)
+                        ChatPartnerRowView(user: .placeholders[0])
                     }
                 } header: {
                     Text("Contacts on WhatsApp")
@@ -118,7 +118,7 @@ extension ChatPartnerPickerView {
     private func destinationView(for route: ChannelCreationRoute) -> some View {
         switch route {
         case .addGroupChatMembers:
-            AddGroupChatPartnerView(viewModel: viewModel)
+            GroupPartnerPickerView(viewModel: viewModel)
         case .setupGroupChat:
             Text("Setup Group Chat")
         }
