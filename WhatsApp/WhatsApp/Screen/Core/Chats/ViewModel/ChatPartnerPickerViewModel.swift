@@ -48,7 +48,7 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     func fetchUser() async {
         do {
             let userNode = try await UserService.paginateUsers(lastCursor: lastCursor, pageSize: 5)
-            self.users = userNode.users
+            self.users.append(contentsOf: userNode.users)
             self.lastCursor = userNode.currentCursor
             print("lastCursor: \(String(describing: lastCursor))")
         } catch {

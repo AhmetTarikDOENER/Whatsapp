@@ -43,6 +43,8 @@ struct ChatPartnerPickerView: View {
                         .textCase(nil)
                         .bold()
                 }
+                
+                loadMoreUsersView()
             }
             .navigationTitle("New Chat")
             .navigationBarTitleDisplayMode(.inline)
@@ -58,6 +60,15 @@ struct ChatPartnerPickerView: View {
                 makeTrailingNavigationItem()
             }
         }
+    }
+    
+    private func loadMoreUsersView() -> some View {
+        ProgressView()
+            .frame(maxWidth: .infinity)
+            .listRowBackground(Color.clear)
+            .task {
+                await viewModel.fetchUser()
+            }
     }
 }
 
