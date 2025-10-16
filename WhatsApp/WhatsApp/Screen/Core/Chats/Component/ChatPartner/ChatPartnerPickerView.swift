@@ -29,6 +29,9 @@ struct ChatPartnerPickerView: View {
             List {
                 ForEach(ChatPartnerPickerOption.allCases) { item in
                     ChatPartnerHeaderSectionItemView(item: item)
+                        .onTapGesture {
+                            viewModel.navigationStack.append(.addGroupChatMembers)
+                        }
                 }
                 
                 Section {
