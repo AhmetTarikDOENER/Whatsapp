@@ -44,7 +44,9 @@ struct ChatPartnerPickerView: View {
                         .bold()
                 }
                 
-                loadMoreUsersView()
+                if viewModel.isPaginatable {
+                    loadMoreUsersView()
+                }
             }
             .navigationTitle("New Chat")
             .navigationBarTitleDisplayMode(.inline)

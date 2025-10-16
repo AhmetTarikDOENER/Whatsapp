@@ -26,6 +26,10 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         selectedChatPartners.isEmpty
     }
     
+    var isPaginatable: Bool {
+        !users.isEmpty
+    }
+    
     init() {
         Task { await fetchUser() }
     }
@@ -50,7 +54,6 @@ final class ChatPartnerPickerViewModel: ObservableObject {
             let userNode = try await UserService.paginateUsers(lastCursor: lastCursor, pageSize: 5)
             self.users.append(contentsOf: userNode.users)
             self.lastCursor = userNode.currentCursor
-            print("lastCursor: \(String(describing: lastCursor))")
         } catch {
             print("Failed to fetch users in ChatPartnerPickerViewModel")
         }
