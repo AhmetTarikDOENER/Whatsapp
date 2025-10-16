@@ -120,7 +120,7 @@ extension ChatPartnerPickerView {
         case .groupPartnerPicker:
             GroupPartnerPickerView(viewModel: viewModel)
         case .setupGroupChat:
-            Text("Setup Group Chat")
+            NewGroupSetupView(viewModel: viewModel)
         }
     }
 }
