@@ -11,7 +11,9 @@ struct GroupPartnerPickerView: View {
         List {
             if viewModel.showSelectedUsers {
                 SelectedChatPartnerView(users: viewModel.selectedChatPartners) { user in
-                    viewModel.handleItemSelection(user)
+                    withAnimation(.spring) {
+                        viewModel.handleItemSelection(user)
+                    }
                 }
             }
             

@@ -27,6 +27,10 @@ struct NewGroupSetupView: View {
             }
             .listRowBackground(Color.clear)
         }
+        .navigationTitle("New Group")
+        .toolbar {
+            trailingNavigationItem()
+        }
     }
     
     private func groupChatSetupHeaderView() -> some View {
@@ -37,8 +41,21 @@ struct NewGroupSetupView: View {
             TextField("", text: $channelName, prompt: Text("Group Name (optional)"))
         }
     }
+    
+    @ToolbarContentBuilder
+    private func trailingNavigationItem() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button("Create") {
+                
+            }
+            .bold()
+            .disabled(viewModel.disableNextButton)
+        }
+    }
 }
 
 #Preview {
-    NewGroupSetupView(viewModel: .init())
+    NavigationStack {
+        NewGroupSetupView(viewModel: .init())
+    }
 }
