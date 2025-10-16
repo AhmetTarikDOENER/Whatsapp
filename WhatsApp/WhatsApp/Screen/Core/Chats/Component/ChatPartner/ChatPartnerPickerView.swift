@@ -41,8 +41,12 @@ struct ChatPartnerPickerView: View {
                 }
             }
             .navigationTitle("New Chat")
+            .searchable(
+                text: $searchText,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Search name or number"
+            )
             .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $searchText, prompt: "Search name or number")
             .toolbar {
                 makeTrailingNavigationItem()
             }
