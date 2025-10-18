@@ -36,6 +36,10 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         !users.isEmpty
     }
     
+    private var isDirectChannel: Bool {
+        selectedChatPartners.count == 1
+    }
+    
     init() {
         Task { await fetchUser() }
     }
@@ -104,8 +108,12 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         membersUids.forEach { userId in
             /// Which channel is user belongs to, regardless of  whether the direct or group channel
             FirebaseConstants.UserChannelsReference.child(currentUid).child(channelId).setValue(true)
-            /// Make sure that a direct channel is unique
-            FirebaseConstants.UserDirectChannels.child(userId).child(channelId).setValue(true)
+        }
+        /// Make sure that a direct channel is unique
+        if isDirectChannel {
+            let chatPartner = selectedChatPartners[0]
+            FirebaseConstants.UserDirectChannels.child(currentUid).child(chatPartner.uid).setValue([channelId: true])
+            FirebaseConstants.UserDirectChannels.child(chatPartner.uid).child(currentUid).setValue([channelId: true])
         }
         
         let newChannel = Channel(channelDictionary)
