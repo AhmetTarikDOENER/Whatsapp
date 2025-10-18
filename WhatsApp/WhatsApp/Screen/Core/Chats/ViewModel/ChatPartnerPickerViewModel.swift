@@ -63,4 +63,8 @@ final class ChatPartnerPickerViewModel: ObservableObject {
             print("Failed to fetch users in ChatPartnerPickerViewModel")
         }
     }
+    
+//    func buildDirectChannel() async -> Result<Channel, Error> {
+//        
+//    }
 }
