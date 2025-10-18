@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ChatroomView: View {
     
+    let channel: Channel
+    
     //  MARK: - Body
     var body: some View {
         MessageListView()
@@ -26,7 +28,7 @@ extension ChatroomView {
                 Circle()
                     .frame(width: 35, height: 35)
                 
-                Text("johndoe")
+                Text(channel.title)
                     .bold()
             }
         }
@@ -59,6 +61,6 @@ extension ChatroomView {
 
 #Preview {
     NavigationStack {
-        ChatroomView()
+        ChatroomView(channel: .placeholder)
     }
 }

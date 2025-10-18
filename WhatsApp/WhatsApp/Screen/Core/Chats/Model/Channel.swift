@@ -1,4 +1,5 @@
 import Foundation
+import FirebaseAuth
 
 struct Channel: Identifiable {
     var id: String
@@ -15,12 +16,26 @@ struct Channel: Identifiable {
     var isGroupChat: Bool {
         members.count > 2
     }
+    
+    var membersExcludingMe: [User] {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return [] }
+        return members.filter { $0.uid != currentUid }
+    }
+    
+    var title: String {
+        if let name = name { return name }
+        if isGroupChat {
+            return "Group Chat"
+        } else {
+            return membersExcludingMe.first?.username ?? "Unknown"
+        }
+    }
 }
 
 extension Channel {
     init(_ dictionary: [String: Any]) {
         self.id = dictionary[.id] as? String ?? ""
-        self.name = dictionary[.name] as? String ?? ""
+        self.name = dictionary[.name] as? String? ?? nil
         self.lastMessage = dictionary[.lastMessage] as? String ?? ""
         let creationInterval = dictionary[.creationDate] as? Double ?? 0
         self.creationDate = Date(timeIntervalSince1970: creationInterval)
