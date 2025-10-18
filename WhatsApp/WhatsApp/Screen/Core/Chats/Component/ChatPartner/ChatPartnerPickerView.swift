@@ -3,7 +3,7 @@ import SwiftUI
 enum ChatPartnerPickerOption: String, CaseIterable, Identifiable {
     case newGroup = "New Group"
     case newContact = "New Contact"
-    case newComminity = "New Community"
+    case newCommunity = "New Community"
     
     var id: String { rawValue }
     
@@ -13,7 +13,7 @@ enum ChatPartnerPickerOption: String, CaseIterable, Identifiable {
         switch self {
         case .newGroup: return "person.2.fill"
         case .newContact: return "person.fill.badge.plus"
-        case .newComminity: return "person.3.fill"
+        case .newCommunity: return "person.3.fill"
         }
     }
 }
@@ -28,10 +28,10 @@ struct ChatPartnerPickerView: View {
         NavigationStack(path: $viewModel.navigationStack) {
             List {
                 ForEach(ChatPartnerPickerOption.allCases) { item in
-                    ChatPartnerHeaderSectionItemView(item: item)
-                        .onTapGesture {
-                            viewModel.navigationStack.append(.groupPartnerPicker)
-                        }
+                    ChatPartnerHeaderSectionItemView(item: item) {
+                        guard item == ChatPartnerPickerOption.newGroup else { return }
+                        viewModel.navigationStack.append(.groupPartnerPicker)
+                    }
                 }
                 
                 Section {
@@ -81,10 +81,11 @@ extension ChatPartnerPickerView {
     private struct ChatPartnerHeaderSectionItemView: View {
         
         let item: ChatPartnerPickerOption
+        let onTapHandler: () -> Void
         
         var body: some View {
             Button {
-                
+                onTapHandler()
             } label: {
                 makeButton()
             }
