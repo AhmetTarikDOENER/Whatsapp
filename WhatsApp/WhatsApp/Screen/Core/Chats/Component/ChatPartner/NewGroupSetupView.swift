@@ -4,6 +4,7 @@ struct NewGroupSetupView: View {
     
     @State private var channelName = ""
     @ObservedObject var viewModel: ChatPartnerPickerViewModel
+    var onCreate: (_ newChannel: Channel) -> Void
     
     var body: some View {
         List {
@@ -60,7 +61,7 @@ struct NewGroupSetupView: View {
     private func trailingNavigationItem() -> some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button("Create") {
-                
+                viewModel.createGroupChannel(channelName, completion: onCreate)
             }
             .bold()
             .disabled(viewModel.disableNextButton)
@@ -70,6 +71,8 @@ struct NewGroupSetupView: View {
 
 #Preview {
     NavigationStack {
-        NewGroupSetupView(viewModel: .init())
+        NewGroupSetupView(viewModel: .init()) { newChannel in
+            
+        }
     }
 }

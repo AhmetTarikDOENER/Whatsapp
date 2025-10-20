@@ -73,10 +73,6 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         }
     }
     
-//    func buildDirectChannel(_ channel: Channel) async -> Result<Channel, Error> {
-//
-//    }
-    
     func createChannel(_ channelName: String?) -> Result<Channel, Error> {
         guard !selectedChatPartners.isEmpty else { return .failure(ChannelCreationError.noChatPartners)}
         guard let channelId = FirebaseConstants.ChannelsReference.childByAutoId().key,
@@ -96,7 +92,8 @@ final class ChatPartnerPickerViewModel: ObservableObject {
             .lastMessageTimestamp: timestamp,
             .membersUids: membersUids,
             .membersCount: membersUids.count,
-            .adminUids: [currentUid]
+            .adminUids: [currentUid],
+            .createdBy: currentUid
         ]
         
         if let channelName = channelName, channelName.isEmptyOrWhitespace {
@@ -120,5 +117,15 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         newChannel.members = selectedChatPartners
         
         return .success(newChannel)
+    }
+    
+    func createGroupChannel(_ groupName: String?, completion: @escaping (_ newChannel: Channel) -> Void) {
+        let channelCreation = createChannel(groupName)
+        switch channelCreation {
+        case .success(let channel):
+            completion(channel)
+        case .failure(let error):
+            print("Failed to create a group channel: \(error.localizedDescription)")
+        }
     }
 }

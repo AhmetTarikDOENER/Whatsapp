@@ -145,7 +145,7 @@ extension ChatPartnerPickerView {
         case .groupPartnerPicker:
             GroupPartnerPickerView(viewModel: viewModel)
         case .setupGroupChat:
-            NewGroupSetupView(viewModel: viewModel)
+            NewGroupSetupView(viewModel: viewModel, onCreate: onCreate)
         }
     }
 }
