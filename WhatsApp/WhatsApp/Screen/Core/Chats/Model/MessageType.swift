@@ -16,8 +16,17 @@ enum MessageDirection: String, CaseIterable {
     }
 }
 
-enum MessageType: String, CaseIterable {
+enum MessageType {
     case text, photo, video, audio
+    
+    init(_ stringValue: String) {
+        switch stringValue {
+        case .text: self = .text
+        case "photo": self = .photo
+        case "video": self = .video
+        default: self = .text
+        }
+    }
     
     var title: String {
         switch self {

@@ -1,10 +1,14 @@
 import SwiftUI
+import FirebaseAuth
 
 struct MessageItem: Identifiable {
-    let id = UUID().uuidString
+    let id: String
     let text: String
-    let direction: MessageDirection
     let messageType: MessageType
+    let ownerUid: String
+    var direction: MessageDirection {
+        ownerUid == Auth.auth().currentUser?.uid ? .outgoing : .incoming
+    }
     
     var backgroundColor: Color {
         return direction == .outgoing ? Color.bubbleGreen : .bubbleWhite
@@ -21,23 +25,35 @@ struct MessageItem: Identifiable {
 
 extension MessageItem {
     static let sentPlaceholder = MessageItem(
+        id: UUID().uuidString,
         text: "Hey Jen! How're you today?",
-        direction: .outgoing,
-        messageType: .text
+        messageType: .text,
+        ownerUid: "1"
     )
     
     static let receivedPlaceholder = MessageItem(
+        id: UUID().uuidString,
         text: "Hey John! Doing great😀, what about you?",
-        direction: .incoming,
-        messageType: .text
+        messageType: .text,
+        ownerUid: "2"
     )
     
     static let stubMessages: [MessageItem] = [
-        .init(text: "Hi, There!", direction: .outgoing, messageType: .text),
-        .init(text: "Check this photo", direction: .incoming, messageType: .photo),
-        .init(text: "Watch this video", direction: .outgoing, messageType: .video),
-        .init(text: "Listen to this", direction: .incoming, messageType: .audio),
+        .init(id: UUID().uuidString, text: "Hi, There!", messageType: .text, ownerUid: "1"),
+        .init(id: UUID().uuidString, text: "Check this photo", messageType: .photo, ownerUid: "2"),
+        .init(id: UUID().uuidString, text: "Watch this video", messageType: .video, ownerUid: "3"),
+        .init(id: UUID().uuidString, text: "Listen to this", messageType: .audio, ownerUid: "4"),
     ]
+}
+
+extension MessageItem {
+    init(id: String, dictionary: [String: Any]) {
+        self.id = id
+        self.text = dictionary[.text] as? String ?? ""
+        let type = dictionary[.type] as? String ?? ""
+        self.messageType = MessageType(type)
+        self.ownerUid = dictionary[.ownerUid] as? String ?? ""
+    }
 }
 
 extension String {

@@ -1,5 +1,6 @@
 import UIKit
 import SwiftUI
+import Combine
 
 final class MessageListController: UIViewController {
     
@@ -16,10 +17,28 @@ final class MessageListController: UIViewController {
         return table
     }()
     
+    private let viewModel: ChatroomViewModel
+    private var subscriptions = Set<AnyCancellable>()
+    
+    init(_ viewModel: ChatroomViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     //  MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        setupMessageListeners()
+    }
+    
+    deinit {
+        subscriptions.forEach { $0.cancel() }
+        subscriptions.removeAll()
     }
     
     private func setupViews() {
@@ -34,6 +53,14 @@ final class MessageListController: UIViewController {
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
     }
+    
+    private func setupMessageListeners() {
+        viewModel.$messages
+            .delay(for: .milliseconds(200), scheduler: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.tableView.reloadData()
+            }.store(in: &subscriptions)
+    }
 }
 
 //  MARK: - MessageListController+UITableViewDelegate & UITableViewDataSource
@@ -42,7 +69,7 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
         cell.backgroundColor = .clear
         cell.selectionStyle = .none
-        let message = MessageItem.stubMessages[indexPath.row]
+        let message = viewModel.messages[indexPath.row]
         cell.contentConfiguration = UIHostingConfiguration {
             switch message.messageType {
             case .text:
@@ -58,7 +85,7 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        MessageItem.stubMessages.count
+        viewModel.messages.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -67,5 +94,5 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
 }
 
 #Preview {
-    MessageListView()
+    MessageListView(.init(.placeholder))
 }

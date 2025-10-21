@@ -6,7 +6,7 @@ struct BubbleTextView: View {
     
     var body: some View {
         VStack(alignment: item.horizontalAlignment, spacing: 4) {
-            Text("Hi Jen! How're you today?")
+            Text(item.text)
                 .padding(12)
                 .background(item.backgroundColor)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))

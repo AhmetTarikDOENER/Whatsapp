@@ -14,7 +14,7 @@ struct ChatroomView: View {
     
     //  MARK: - Body
     var body: some View {
-        MessageListView()
+        MessageListView(viewModel)
             .toolbar {
                 makeLeadingNavigationItems()
                 makeTrailingNavigationGroupItems()
