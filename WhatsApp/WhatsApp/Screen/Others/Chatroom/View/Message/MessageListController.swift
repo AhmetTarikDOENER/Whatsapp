@@ -20,6 +20,13 @@ final class MessageListController: UIViewController {
     private let viewModel: ChatroomViewModel
     private var subscriptions = Set<AnyCancellable>()
     
+    private let backgroundImageView: UIImageView = {
+        let imageView = UIImageView(image: .chatbackground)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
     init(_ viewModel: ChatroomViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -32,6 +39,8 @@ final class MessageListController: UIViewController {
     //  MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.backgroundColor = .clear
+        view.backgroundColor = .clear
         setupViews()
         setupMessageListeners()
     }
@@ -42,9 +51,14 @@ final class MessageListController: UIViewController {
     }
     
     private func setupViews() {
+        view.addSubview(backgroundImageView)
         view.addSubview(tableView)
         
         NSLayoutConstraint.activate([
+            backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
+            backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -95,4 +109,5 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
 
 #Preview {
     MessageListView(.init(.placeholder))
+        .ignoresSafeArea()
 }
