@@ -22,6 +22,7 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     @Published var navigationStack = [ChannelCreationRoute]()
     @Published var selectedChatPartners = [User]()
     @Published private(set) var users = [User]()
+    @Published var errorState: (showError: Bool, errorMessage: String) = (false, "Oh, something went wrong")
     private var lastCursor: String?
     
     var showSelectedUsers: Bool {
@@ -50,6 +51,11 @@ final class ChatPartnerPickerViewModel: ObservableObject {
             guard let index = selectedChatPartners.firstIndex(where: { $0.uid == user.uid }) else { return }
             selectedChatPartners.remove(at: index)
         } else {
+            guard selectedChatPartners.count < ChannelConstants.maxGroupParticipants else {
+                errorState.errorMessage = "Sorry, We only allow a maximum of \(ChannelConstants.maxGroupParticipants) participants in a group chat"
+                errorState.showError = true
+                return
+            }
             selectedChatPartners.append(user)
         }
     }
