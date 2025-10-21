@@ -32,6 +32,14 @@ struct Channel: Identifiable {
         }
     }
     
+    var isCreatedByMe: Bool {
+        createdBy == Auth.auth().currentUser?.uid ?? ""
+    }
+    
+    var creatorName: String {
+        members.first { $0.uid == createdBy }?.username ?? "Someone"
+    }
+    
     private var groupMembersName: String {
         let membersCount = membersCount - 1
         let fullNames: [String] = membersExcludingMe.map { $0.username }

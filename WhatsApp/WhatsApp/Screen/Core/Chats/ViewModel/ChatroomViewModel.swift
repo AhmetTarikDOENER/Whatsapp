@@ -7,7 +7,7 @@ final class ChatroomViewModel: ObservableObject {
     @Published var messages: [MessageItem] = []
     private var currentUser: User?
     private var subscriptions = Set<AnyCancellable>()
-    private let channel: Channel
+    private(set) var channel: Channel
     
     init(_ channel: Channel) {
         self.channel = channel
