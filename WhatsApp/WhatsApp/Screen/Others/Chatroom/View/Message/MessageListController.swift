@@ -27,6 +27,7 @@ final class MessageListController: UIViewController {
         return imageView
     }()
     
+    //  MARK: - Initializer
     init(_ viewModel: ChatroomViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -92,6 +93,13 @@ extension MessageListController: UITableViewDelegate, UITableViewDataSource {
                 BubbleImageView(item: message)
             case .audio:
                 BubbleAudioView(item: message)
+            case .admin(let adminType):
+                switch adminType {
+                case .channelCreation:
+                    Text("CHANNEL WAS CREATED")
+                default:
+                    Text("ADMIN TEXT")
+                }
             }
         }
         
