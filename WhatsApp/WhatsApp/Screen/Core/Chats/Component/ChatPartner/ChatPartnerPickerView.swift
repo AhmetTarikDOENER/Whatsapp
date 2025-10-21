@@ -72,6 +72,11 @@ struct ChatPartnerPickerView: View {
             .toolbar {
                 makeTrailingNavigationItem()
             }
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    viewModel.selectedChatPartners.removeAll()
+                }
+            }
         }
     }
     
