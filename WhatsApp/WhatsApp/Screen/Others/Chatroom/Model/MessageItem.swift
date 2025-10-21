@@ -40,15 +40,8 @@ extension MessageItem {
     ]
 }
 
-enum MessageDirection: String, CaseIterable {
-    case incoming
-    case outgoing
-    
-    static var random: MessageDirection {
-        return [MessageDirection.incoming, .outgoing].randomElement() ?? .incoming
-    }
-}
-
-enum MessageType: String, CaseIterable {
-    case text, photo, video, audio
+extension String {
+    static let `type` = "type"
+    static let timestamp = "timestamp"
+    static let ownerUid = "ownerUid"
 }

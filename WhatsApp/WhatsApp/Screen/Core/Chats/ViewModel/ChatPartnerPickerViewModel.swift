@@ -76,8 +76,8 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     func createChannel(_ channelName: String?) -> Result<Channel, Error> {
         guard !selectedChatPartners.isEmpty else { return .failure(ChannelCreationError.noChatPartners)}
         guard let channelId = FirebaseConstants.ChannelsReference.childByAutoId().key,
-              let currentUid = Auth.auth().currentUser?.uid
-              /*let messageId = FirebaseConstants.MessagesReference.childByAutoId().key*/ else {
+              let currentUid = Auth.auth().currentUser?.uid,
+              let messageId = FirebaseConstants.MessagesReference.childByAutoId().key else {
             return .failure(ChannelCreationError.failedToCreateUniqueIds)
         }
         
@@ -85,9 +85,11 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         membersUids.append(currentUid)
         let timestamp = Date().timeIntervalSince1970
         
+        let newChannelBroadcast = AdminMessageType.channelCreation.rawValue
+        
         var channelDictionary: [String: Any] = [
             .id: channelId,
-            .lastMessage: "",
+            .lastMessage: newChannelBroadcast,
             .creationDate: timestamp,
             .lastMessageTimestamp: timestamp,
             .membersUids: membersUids,
@@ -99,8 +101,15 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         if let channelName = channelName, channelName.isEmptyOrWhitespace {
             channelDictionary[.name] = channelName
         }
+        
+        let messageDictionary: [String: Any] = [
+            .type: newChannelBroadcast,
+            .timestamp: timestamp,
+            .ownerUid: currentUid
+        ]
 
         FirebaseConstants.ChannelsReference.child(channelId).setValue(channelDictionary)
+        FirebaseConstants.MessagesReference.child(channelId).child(messageId).setValue(messageDictionary)
         
         membersUids.forEach { userId in
             /// Which channel is user belongs to, regardless of  whether the direct or group channel
