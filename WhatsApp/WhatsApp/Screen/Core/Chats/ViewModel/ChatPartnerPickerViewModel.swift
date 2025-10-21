@@ -136,14 +136,36 @@ final class ChatPartnerPickerViewModel: ObservableObject {
     
     func createDirectChannel(_ chatPartner: User, completion: @escaping (_ newChannel: Channel) -> Void) {
         selectedChatPartners.append(chatPartner)
-        let channelCreation = createChannel(nil)
-        switch channelCreation {
-        case .success(let channel):
-            completion(channel)
-        case .failure(let error):
-            showError("Sorry, something went wrong while we we trying to setup your chat.")
-            print("Failed to create a direct channel: \(error.localizedDescription)")
+        Task {
+            /// If existing DM, get the channel
+            if let channelId = await verifyIfDirectChannelExists(with: chatPartner.uid) {
+                let snapshot = try await FirebaseConstants.ChannelsReference.child(channelId).getData()
+                var channelDictionary = snapshot.value as! [String: Any]
+                var directChannel = Channel(channelDictionary)
+                directChannel.members = selectedChatPartners
+                completion(directChannel)
+            } else {
+                /// create a new DM with the user
+                let channelCreation = createChannel(nil)
+                switch channelCreation {
+                case .success(let channel):
+                    completion(channel)
+                case .failure(let error):
+                    showError("Sorry, something went wrong while we we trying to setup your chat.")
+                    print("Failed to create a direct channel: \(error.localizedDescription)")
+                }
+            }
         }
+    }
+    
+    typealias ChannelId = String
+    private func verifyIfDirectChannelExists(with chatPartnerId: String) async -> ChannelId? {
+        guard let currentUid = Auth.auth().currentUser?.uid,
+              let snapshot = try? await FirebaseConstants.UserDirectChannels.child(currentUid).child(chatPartnerId).getData(),
+              snapshot.exists() else { return nil }
+        let directMessageDictionary = snapshot.value as! [String: Bool]
+        let channelId =  directMessageDictionary.compactMap { $0.key }.first
+        return channelId
     }
     
     private func showError(_ errorMessage: String) {
