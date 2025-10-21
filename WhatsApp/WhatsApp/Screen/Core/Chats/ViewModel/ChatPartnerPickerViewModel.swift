@@ -52,8 +52,8 @@ final class ChatPartnerPickerViewModel: ObservableObject {
             selectedChatPartners.remove(at: index)
         } else {
             guard selectedChatPartners.count < ChannelConstants.maxGroupParticipants else {
-                errorState.errorMessage = "Sorry, We only allow a maximum of \(ChannelConstants.maxGroupParticipants) participants in a group chat"
-                errorState.showError = true
+                let errorMessage = "Sorry, we only allow a maximum of \(ChannelConstants.maxGroupParticipants) participants in a group chat."
+                showError(errorMessage)
                 return
             }
             selectedChatPartners.append(user)
@@ -113,7 +113,7 @@ final class ChatPartnerPickerViewModel: ObservableObject {
             .timestamp: timestamp,
             .ownerUid: currentUid
         ]
-
+        
         FirebaseConstants.ChannelsReference.child(channelId).setValue(channelDictionary)
         FirebaseConstants.MessagesReference.child(channelId).child(messageId).setValue(messageDictionary)
         
@@ -141,8 +141,14 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         case .success(let channel):
             completion(channel)
         case .failure(let error):
+            showError("Sorry, something went wrong while we we trying to setup your chat.")
             print("Failed to create a direct channel: \(error.localizedDescription)")
         }
+    }
+    
+    private func showError(_ errorMessage: String) {
+        errorState.errorMessage = errorMessage
+        errorState.showError = true
     }
     
     func createGroupChannel(_ groupName: String?, completion: @escaping (_ newChannel: Channel) -> Void) {
@@ -151,6 +157,7 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         case .success(let channel):
             completion(channel)
         case .failure(let error):
+            showError("Sorry, something went wrong while we we trying to setup your group chat.")
             print("Failed to create a group channel: \(error.localizedDescription)")
         }
     }

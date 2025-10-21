@@ -70,7 +70,8 @@ struct ChatPartnerPickerView: View {
             }
             .alert(isPresented: $viewModel.errorState.showError) {
                 Alert(
-                    title: Text(viewModel.errorState.errorMessage),
+                    title: Text("Uh Oh 😕"),
+                    message: Text(viewModel.errorState.errorMessage),
                     dismissButton: .default(Text("OK"))
                 )
             }
