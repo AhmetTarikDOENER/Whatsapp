@@ -23,7 +23,7 @@ struct ChannelItemView: View {
             
             Spacer()
             
-            Text("5:12 PM")
+            Text(channel.lastMessageTimestamp.dateOrTimeRepresentation)
                 .foregroundStyle(.gray)
                 .font(.system(size: 15))
         }
