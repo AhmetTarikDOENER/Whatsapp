@@ -1,6 +1,10 @@
 import SwiftUI
 import FirebaseAuth
 
+enum ChannelTabRoutes: Hashable {
+    case chatroom(_ channel: Channel)
+}
+
 final class ChannelTabViewModel: ObservableObject {
     
     @Published var navigateToChatroom = false
@@ -9,6 +13,7 @@ final class ChannelTabViewModel: ObservableObject {
     @Published var channels: [Channel] = []
     typealias ChannelId = String
     @Published var channelDictionary: [ChannelId: Channel] = [:]
+    @Published var navigationRoutes = [ChannelTabRoutes]()
     
     init() {
         fetchCurrentUserChannels()
