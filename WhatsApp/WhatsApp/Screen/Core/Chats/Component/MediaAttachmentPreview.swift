@@ -1,11 +1,14 @@
 import SwiftUI
 
 struct MediaAttachmentPreview: View {
+    
+    let selectedPhotos: [UIImage]
+    
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 audioAttachmentPreview()
-                ForEach(0 ..< 12) { _ in
+                ForEach(selectedPhotos, id: \.self) { image in
                     thumbnailImageView()
                 }
             }
@@ -100,5 +103,5 @@ extension MediaAttachmentPreview {
 }
 
 #Preview {
-    MediaAttachmentPreview()
+    MediaAttachmentPreview(selectedPhotos: [])
 }

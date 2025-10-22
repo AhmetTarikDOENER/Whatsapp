@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 struct ChatroomView: View {
     
@@ -21,6 +22,7 @@ struct ChatroomView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
+            .photosPicker(isPresented: $viewModel.showPhotoPicker, selection: $viewModel.photoPickerItems)
             .safeAreaInset(edge: .bottom) {
                 bottomSafeAreaView()
             }
@@ -78,12 +80,13 @@ extension ChatroomView {
         VStack(spacing: 0) {
             Divider()
             
-            MediaAttachmentPreview()
-            
-            Divider()
+            if viewModel.showPhotoPickerPreview {
+                MediaAttachmentPreview(selectedPhotos: viewModel.selectedPhotos)
+                Divider()
+            }
                 
-            TextInputArea(textMessage: $viewModel.textMessage) {
-                viewModel.sendMessage()
+            TextInputArea(textMessage: $viewModel.textMessage) { action in
+                viewModel.handleTextInputArea(action)
             }
         }
     }

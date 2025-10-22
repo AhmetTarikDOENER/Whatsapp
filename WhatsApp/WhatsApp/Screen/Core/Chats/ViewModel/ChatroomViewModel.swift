@@ -1,5 +1,7 @@
 import Foundation
 import Combine
+import PhotosUI
+import SwiftUI
 
 final class ChatroomViewModel: ObservableObject {
     
@@ -8,6 +10,13 @@ final class ChatroomViewModel: ObservableObject {
     private var currentUser: User?
     private var subscriptions = Set<AnyCancellable>()
     private(set) var channel: Channel
+    @Published var showPhotoPicker = false
+    @Published var photoPickerItems: [PhotosPickerItem] = []
+    @Published var selectedPhotos: [UIImage] = []
+    
+    var showPhotoPickerPreview: Bool {
+        !photoPickerItems.isEmpty
+    }
     
     init(_ channel: Channel) {
         self.channel = channel
@@ -66,6 +75,15 @@ final class ChatroomViewModel: ObservableObject {
             self.channel.members.append(contentsOf: userNode.users)
             self.getMessages()
             print("getAllChannelMembers: \(channel.members.map { $0.username })")
+        }
+    }
+    
+    func handleTextInputArea(_ action: TextInputArea.UserAction) {
+        switch action {
+        case .presentPhotoPicker:
+            showPhotoPicker = true
+        case .sendMessage:
+            sendMessage()
         }
     }
 }
