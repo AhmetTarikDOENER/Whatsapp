@@ -22,9 +22,7 @@ struct ChatroomView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
             .safeAreaInset(edge: .bottom) {
-                TextInputArea(textMessage: $viewModel.textMessage) {
-                    viewModel.sendMessage()
-                }
+                bottomSafeAreaView()
             }
     }
 }
@@ -73,6 +71,20 @@ extension ChatroomView {
             
         } label: {
             Image(systemName: "phone")
+        }
+    }
+    
+    private func bottomSafeAreaView() -> some View {
+        VStack(spacing: 0) {
+            Divider()
+            
+            MediaAttachmentPreview()
+            
+            Divider()
+                
+            TextInputArea(textMessage: $viewModel.textMessage) {
+                viewModel.sendMessage()
+            }
         }
     }
 }
