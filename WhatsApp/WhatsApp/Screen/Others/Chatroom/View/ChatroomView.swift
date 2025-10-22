@@ -31,14 +31,22 @@ struct ChatroomView: View {
 
 //  MARK: - ChatroomView+Extension
 extension ChatroomView {
+    
+    private var channelTitle: String {
+        let maxCharacterCount = 20
+        let trailingCharacters = channel.title.count > maxCharacterCount ? "..." : ""
+        let title = String(channel.title.prefix(maxCharacterCount) + trailingCharacters)
+        
+        return title
+    }
+    
     @ToolbarContentBuilder
     private func makeLeadingNavigationItems() -> some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             HStack {
-                Circle()
-                    .frame(width: 35, height: 35)
+                CircularProfileImageView(channel, size: .mini)
                 
-                Text(channel.title)
+                Text(channelTitle)
                     .bold()
             }
         }
