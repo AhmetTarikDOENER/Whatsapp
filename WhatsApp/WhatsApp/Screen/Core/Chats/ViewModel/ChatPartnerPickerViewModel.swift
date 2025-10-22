@@ -1,5 +1,6 @@
 import Foundation
 import FirebaseAuth
+import Combine
 
 enum ChannelCreationRoute {
     case groupPartnerPicker
@@ -41,11 +42,31 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         selectedChatPartners.count == 1
     }
     
+    private var currentUser: User?
+    private var subcription: AnyCancellable?
+    
     init() {
-        Task { await fetchUser() }
+        listenForAuthState()
+    }
+    
+    deinit {
+        subcription?.cancel()
+        subcription = nil
     }
     
     //  MARK: - Internal
+    private func listenForAuthState() {
+        subcription = AuthService.shared.authState.receive(on: DispatchQueue.main).sink { [weak self] authState in
+            switch authState {
+            case .loggedIn(let loggedInUser):
+                self?.currentUser = loggedInUser
+                Task { await self?.fetchUser() }
+            default:
+                break
+            }
+        }
+    }
+    
     func handleItemSelection(_ user: User) {
         if isUserSelected(user) {
             guard let index = selectedChatPartners.firstIndex(where: { $0.uid == user.uid }) else { return }
@@ -130,6 +151,9 @@ final class ChatPartnerPickerViewModel: ObservableObject {
         
         var newChannel = Channel(channelDictionary)
         newChannel.members = selectedChatPartners
+        if let currentUser {
+            newChannel.members.append(currentUser)
+        }
         
         return .success(newChannel)
     }
@@ -143,6 +167,9 @@ final class ChatPartnerPickerViewModel: ObservableObject {
                 var channelDictionary = snapshot.value as! [String: Any]
                 var directChannel = Channel(channelDictionary)
                 directChannel.members = selectedChatPartners
+                if let currentUser {
+                    directChannel.members.append(currentUser)
+                }
                 completion(directChannel)
             } else {
                 /// create a new DM with the user
