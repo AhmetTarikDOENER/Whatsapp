@@ -3,7 +3,11 @@ import SwiftUI
 struct ChannelTabView: View {
     
     @State private var searchText = ""
-    @StateObject private var viewModel = ChannelTabViewModel()
+    @StateObject private var viewModel: ChannelTabViewModel
+    
+    init(_ currentUser: User) {
+        self._viewModel = StateObject(wrappedValue: ChannelTabViewModel(currentUser))
+    }
     
     var body: some View {
         NavigationStack(path: $viewModel.navigationRoutes) {
@@ -128,5 +132,5 @@ extension ChannelTabView {
 }
 
 #Preview {
-    ChannelTabView()
+    ChannelTabView(.placeholder)
 }

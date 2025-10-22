@@ -22,10 +22,15 @@ final class ChatroomViewModel: ObservableObject {
     
     private func listenToAuthState() {
         AuthService.shared.authState.receive(on: DispatchQueue.main).sink { [weak self] authState in
+            guard let self else { return }
             switch authState {
             case .loggedIn(let currentUser):
-                self?.currentUser = currentUser
-                self?.getAllChannelMembers()
+                self.currentUser = currentUser
+                if self.channel.allMembersFetched {
+                    self.getMessages()
+                } else {
+                    self.getAllChannelMembers()
+                }
             default:
                 break
             }

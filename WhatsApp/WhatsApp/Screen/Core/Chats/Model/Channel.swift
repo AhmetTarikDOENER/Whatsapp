@@ -64,6 +64,10 @@ struct Channel: Identifiable, Hashable {
         
         return "Unknown"
     }
+    
+    var allMembersFetched: Bool {
+        members.count == membersCount
+    }
 }
 
 extension Channel {

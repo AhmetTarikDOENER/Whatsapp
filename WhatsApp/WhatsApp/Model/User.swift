@@ -12,6 +12,7 @@ struct User: Identifiable, Hashable, Decodable {
 }
 
 extension User {
+    static let placeholder = User(uid: "123", username: "Place Holder", email: "placeholder@gmail.com")
     static let placeholders: [User] = [
         .init(uid: "1", username: "Berke", email: "berke@gmail.com"),
         .init(uid: "2", username: "Irem", email: "irem@gmail.com", bio: "Türk! Ögün, calis, güven."),
