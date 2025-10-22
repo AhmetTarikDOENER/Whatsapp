@@ -22,7 +22,11 @@ struct ChatroomView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .tabBar)
-            .photosPicker(isPresented: $viewModel.showPhotoPicker, selection: $viewModel.photoPickerItems)
+            .photosPicker(
+                isPresented: $viewModel.showPhotoPicker,
+                selection: $viewModel.photoPickerItems,
+                maxSelectionCount: 6
+            )
             .safeAreaInset(edge: .bottom) {
                 bottomSafeAreaView()
             }

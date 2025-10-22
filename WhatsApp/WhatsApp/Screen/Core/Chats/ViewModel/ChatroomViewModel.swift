@@ -21,6 +21,7 @@ final class ChatroomViewModel: ObservableObject {
     init(_ channel: Channel) {
         self.channel = channel
         listenToAuthState()
+        onPhotoPickerSelection()
     }
     
     deinit {
@@ -84,6 +85,21 @@ final class ChatroomViewModel: ObservableObject {
             showPhotoPicker = true
         case .sendMessage:
             sendMessage()
+        }
+    }
+    
+    private func onPhotoPickerSelection() {
+        $photoPickerItems.sink { [weak self] photoItems in
+            guard let self else { return }
+            Task { await self.parsePhotoPickerItems(photoItems) }
+        }.store(in: &subscriptions)
+    }
+    
+    private func parsePhotoPickerItems(_ photoPickerItems: [PhotosPickerItem]) async {
+        for photoItem in photoPickerItems {
+            guard let data = try? await photoItem.loadTransferable(type: Data.self),
+                  let uiImage = UIImage(data: data) else { return }
+            self.selectedPhotos.insert(uiImage, at: 0)
         }
     }
 }
