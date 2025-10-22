@@ -6,8 +6,7 @@ struct ChannelItemView: View {
     
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            Circle()
-                .frame(width: 60, height: 60)
+            CircularProfileImageView(channel, size: .medium)
             
             VStack(alignment: .leading, spacing: 4) {
                 makeTitleAndTimestampView()

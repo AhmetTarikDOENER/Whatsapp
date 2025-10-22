@@ -11,7 +11,7 @@ struct Channel: Identifiable {
     var adminUids: [String]
     var membersUids: [String]
     var members: [User]
-    var thumbnailUrl: String?
+    private var thumbnailUrl: String?
     let createdBy: String
     
     var isGroupChat: Bool {
@@ -38,6 +38,18 @@ struct Channel: Identifiable {
     
     var creatorName: String {
         members.first { $0.uid == createdBy }?.username ?? "Someone"
+    }
+    
+    var coverImageUrl: String? {
+        if let thumbnailUrl {
+            return thumbnailUrl
+        }
+        
+        if isGroupChat == false {
+            return membersExcludingMe.first?.profileImageUrl
+        }
+        
+        return nil
     }
     
     private var groupMembersName: String {
