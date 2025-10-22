@@ -3,10 +3,12 @@ import FirebaseAuth
 
 struct MessageItem: Identifiable {
     let id: String
+    let isGroupChat: Bool
     let text: String
     let messageType: MessageType
     let ownerUid: String
     let timestamp: Date
+    var sender: User?
     var direction: MessageDirection {
         ownerUid == Auth.auth().currentUser?.uid ? .outgoing : .incoming
     }
@@ -22,11 +24,24 @@ struct MessageItem: Identifiable {
     var horizontalAlignment: HorizontalAlignment {
         return direction == .incoming ? .leading : .trailing
     }
+    
+    var showGroupPartnerInfo: Bool {
+        isGroupChat && direction == .incoming
+    }
+    
+    private let horizontalPadding: CGFloat = 24
+    var leadingPadding: CGFloat {
+        direction == .incoming ? 0 : horizontalPadding
+    }
+    var trailingPadding: CGFloat {
+        direction == .incoming ? horizontalPadding : 0
+    }
 }
 
 extension MessageItem {
     static let sentPlaceholder = MessageItem(
         id: UUID().uuidString,
+        isGroupChat: true,
         text: "Hey Jen! How're you today?",
         messageType: .text,
         ownerUid: "1",
@@ -35,6 +50,7 @@ extension MessageItem {
     
     static let receivedPlaceholder = MessageItem(
         id: UUID().uuidString,
+        isGroupChat: false,
         text: "Hey John! Doing great😀, what about you?",
         messageType: .text,
         ownerUid: "2",
@@ -42,16 +58,17 @@ extension MessageItem {
     )
     
     static let stubMessages: [MessageItem] = [
-        .init(id: UUID().uuidString, text: "Hi, There!", messageType: .text, ownerUid: "1", timestamp: Date()),
-        .init(id: UUID().uuidString, text: "Check this photo", messageType: .photo, ownerUid: "2", timestamp: Date()),
-        .init(id: UUID().uuidString, text: "Watch this video", messageType: .video, ownerUid: "3", timestamp: Date()),
-        .init(id: UUID().uuidString, text: "Listen to this", messageType: .audio, ownerUid: "4", timestamp: Date()),
+        .init(id: UUID().uuidString, isGroupChat: true, text: "Hi, There!", messageType: .text, ownerUid: "1", timestamp: Date()),
+        .init(id: UUID().uuidString, isGroupChat: false, text: "Check this photo", messageType: .photo, ownerUid: "2", timestamp: Date()),
+        .init(id: UUID().uuidString, isGroupChat: true, text: "Watch this video", messageType: .video, ownerUid: "3", timestamp: Date()),
+        .init(id: UUID().uuidString, isGroupChat: false, text: "Listen to this", messageType: .audio, ownerUid: "4", timestamp: Date()),
     ]
 }
 
 extension MessageItem {
-    init(id: String, dictionary: [String: Any]) {
+    init(id: String, isGroupChat: Bool, dictionary: [String: Any]) {
         self.id = id
+        self.isGroupChat = isGroupChat
         self.text = dictionary[.text] as? String ?? ""
         let type = dictionary[.type] as? String ?? ""
         self.messageType = MessageType(type) ?? .text

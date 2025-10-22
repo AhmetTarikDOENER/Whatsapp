@@ -7,7 +7,12 @@ struct BubbleAudioView: View {
     @State private var sliderRange: ClosedRange<Double> = 0...20
     
     var body: some View {
-        VStack(alignment: item.horizontalAlignment, spacing: 4) {
+        HStack(alignment: .bottom, spacing: 4) {
+            if item.showGroupPartnerInfo {
+                CircularProfileImageView(size: .mini)
+                    .offset(y: 2)
+            }
+            
             HStack {
                 playButton()
                 
@@ -23,7 +28,9 @@ struct BubbleAudioView: View {
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             .applyTail(item.direction)
             
-            timestampView()
+            if item.direction == .outgoing {
+                timestampView()
+            }
         }
         .shadow(
             color: Color(.systemGray5).opacity(0.1),
@@ -32,8 +39,8 @@ struct BubbleAudioView: View {
             y: 20
         )
         .frame(maxWidth: .infinity, alignment: item.alignment)
-        .padding(.leading, item.direction == .incoming ? 5 : 100)
-        .padding(.trailing, item.direction == .incoming ? 100 : 5)
+        .padding(.leading, item.leadingPadding)
+        .padding(.trailing, item.trailingPadding)
     }
     
     private func playButton() -> some View {
@@ -49,20 +56,9 @@ struct BubbleAudioView: View {
     }
     
     private func timestampView() -> some View {
-        HStack {
-            Text("12:34")
-                .font(.system(size: 12))
-
-            if item.direction == .outgoing {
-                Image(.seen)
-                    .resizable()
-                    .renderingMode(.template)
-                    .frame(width: 15, height: 15)
-            }
-        }
-        .foregroundStyle(.gray)
-        .clipShape(Capsule())
-        .padding(12)
+        Text("12:34")
+            .font(.footnote)
+            .foregroundStyle(.gray)
     }
 }
 
