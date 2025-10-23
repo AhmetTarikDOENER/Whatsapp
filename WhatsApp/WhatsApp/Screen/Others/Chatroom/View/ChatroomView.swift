@@ -28,9 +28,11 @@ struct ChatroomView: View {
                 maxSelectionCount: 6,
                 photoLibrary: .shared()
             )
+            .ignoresSafeArea(edges: .bottom)
             .safeAreaInset(edge: .bottom) {
                 bottomSafeAreaView()
             }
+            .animation(.easeInOut, value: viewModel.showPhotoPickerPreview)
             .fullScreenCover(isPresented: $viewModel.videoPlayerState.show) {
                 if let player = viewModel.videoPlayerState.player {
                     MediaPlayerView(player: player) {

@@ -17,7 +17,7 @@ final class ChatroomViewModel: ObservableObject {
     @Published var videoPlayerState: (show: Bool, player: AVPlayer?) = (false, nil)
     
     var showPhotoPickerPreview: Bool {
-        !mediaAttachments.isEmpty
+        !mediaAttachments.isEmpty || !photoPickerItems.isEmpty
     }
     
     init(_ channel: Channel) {
