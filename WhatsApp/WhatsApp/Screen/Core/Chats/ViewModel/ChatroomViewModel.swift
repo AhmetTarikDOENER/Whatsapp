@@ -87,7 +87,13 @@ final class ChatroomViewModel: ObservableObject {
             showPhotoPicker = true
         case .sendMessage:
             sendMessage()
+        case .recordAudio:
+            break
         }
+    }
+    
+    func toggleAudioRecording() {
+        
     }
     
     private func onPhotoPickerSelection() {

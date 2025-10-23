@@ -6,9 +6,10 @@ struct TextInputArea: View {
     @Binding var textMessage: String
     let actionHandler: (_ action: UserAction) -> Void
     @State private var isRecording = false
+    @State private var isPulsing = false
     
     private var disableSendButton: Bool {
-        textMessage.isEmptyOrWhitespace
+        textMessage.isEmptyOrWhitespace || isRecording
     }
     
     //  MARK: - Body
@@ -16,8 +17,13 @@ struct TextInputArea: View {
         HStack(alignment: .bottom, spacing: 4) {
             imagePickerButton()
             audioRecorderButton()
-//            messageTextField()
-            audioSessionIndicatorView()
+            
+            if isRecording {
+                audioSessionIndicatorView()
+            } else {
+                messageTextField()
+            }
+            
             sendMessageButton()
                 .disabled(disableSendButton)
                 .grayscale(disableSendButton ? 0.8 : 0.0)
@@ -26,6 +32,7 @@ struct TextInputArea: View {
         .padding(.horizontal, 8)
         .padding(.top, 12)
         .background(.whatsAppWhite)
+        .animation(.spring, value: isRecording)
     }
     
     //  MARK: - Private
@@ -40,14 +47,18 @@ struct TextInputArea: View {
     
     private func audioRecorderButton() -> some View {
         Button {
-            
+            actionHandler(.recordAudio)
+            isRecording.toggle()
+            withAnimation(.easeInOut(duration: 1.0).repeatForever()) {
+                isPulsing.toggle()
+            }
         } label: {
-            Image(systemName: "mic.fill")
+            Image(systemName: isRecording ? "square.fill" : "mic.fill")
                 .fontWeight(.heavy)
                 .imageScale(.small)
                 .foregroundStyle(.white)
                 .padding(8)
-                .background(.blue)
+                .background(isRecording ? .red : .blue)
                 .clipShape(Circle())
                 .padding(.horizontal, 4)
         }
@@ -88,6 +99,7 @@ struct TextInputArea: View {
             Image(systemName: "circle.fill")
                 .foregroundStyle(.red)
                 .font(.caption)
+                .scaleEffect(isPulsing ? 1.8 : 1.0)
             
             Text("Recording audio")
                 .font(.callout)
@@ -115,6 +127,7 @@ extension TextInputArea {
     enum UserAction {
         case presentPhotoPicker
         case sendMessage
+        case recordAudio
     }
 }
 
