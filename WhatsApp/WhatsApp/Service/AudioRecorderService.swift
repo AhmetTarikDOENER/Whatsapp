@@ -1,11 +1,14 @@
 import Foundation
 import AVFoundation
+import Combine
 
 final class AudioRecorderService {
     
     private var audioRecorder: AVAudioRecorder?
     private var isRecording = false
     private var startTime: Date?
+    private var timer: AnyCancellable?
+    private var elapsedTime: Double = 0
     
     func startRecording() {
         let audioSession = AVAudioSession.sharedInstance()
@@ -43,7 +46,12 @@ final class AudioRecorderService {
         
     }
     
-    func startTimer() {
-        
+    private func startTimer() {
+        timer = Timer.publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] _ in
+                guard let startTime = self?.startTime else { return }
+                self?.elapsedTime = Date().timeIntervalSince(startTime)
+            }
     }
 }
