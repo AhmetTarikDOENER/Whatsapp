@@ -15,6 +15,7 @@ final class ChatroomViewModel: ObservableObject {
     @Published var photoPickerItems: [PhotosPickerItem] = []
     @Published var mediaAttachments: [MediaAttachment] = []
     @Published var videoPlayerState: (show: Bool, player: AVPlayer?) = (false, nil)
+    private let audioRecorderService = AudioRecorderService()
     
     var showPhotoPickerPreview: Bool {
         !mediaAttachments.isEmpty || !photoPickerItems.isEmpty
@@ -93,7 +94,20 @@ final class ChatroomViewModel: ObservableObject {
     }
     
     func toggleAudioRecording() {
-        
+        if audioRecorderService.isRecording {
+            audioRecorderService.stopRecording { [weak self] audioURL, audioDuration in
+                self?.createAudioAttachment(from: audioURL, audioDuration: audioDuration)
+            }
+        } else {
+            audioRecorderService.startRecording()
+        }
+    }
+    
+    private func createAudioAttachment(from audioURL: URL?, audioDuration: TimeInterval) {
+        guard let audioURL else { return }
+        let id = UUID().uuidString
+        let audioAttachment = MediaAttachment(id: id, type: .audio)
+        mediaAttachments.insert(audioAttachment, at: 0)
     }
     
     private func onPhotoPickerSelection() {
