@@ -5,6 +5,7 @@ struct TextInputArea: View {
     //  MARK: - Properties
     @Binding var textMessage: String
     let actionHandler: (_ action: UserAction) -> Void
+    @State private var isRecording = false
     
     private var disableSendButton: Bool {
         textMessage.isEmptyOrWhitespace
@@ -15,7 +16,8 @@ struct TextInputArea: View {
         HStack(alignment: .bottom, spacing: 4) {
             imagePickerButton()
             audioRecorderButton()
-            messageTextField()
+//            messageTextField()
+            audioSessionIndicatorView()
             sendMessageButton()
                 .disabled(disableSendButton)
                 .grayscale(disableSendButton ? 0.8 : 0.0)
@@ -79,6 +81,33 @@ struct TextInputArea: View {
                 .clipShape(Circle())
                 .padding(.horizontal, 4)
         }
+    }
+    
+    private func audioSessionIndicatorView() -> some View {
+        HStack {
+            Image(systemName: "circle.fill")
+                .foregroundStyle(.red)
+                .font(.caption)
+            
+            Text("Recording audio")
+                .font(.callout)
+                .lineLimit(1)
+            
+            Spacer()
+            
+            Text("00:01")
+                .font(.callout)
+                .fontWeight(.semibold)
+        }
+        .padding(.horizontal, 8)
+        .frame(height: 30)
+        .frame(maxWidth: .infinity)
+        .clipShape(Capsule())
+        .background(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(.blue.opacity(0.1))
+        )
+        .overlay { textViewBorder() }
     }
 }
 
