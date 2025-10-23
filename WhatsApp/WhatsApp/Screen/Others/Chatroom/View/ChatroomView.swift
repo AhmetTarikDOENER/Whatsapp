@@ -25,7 +25,8 @@ struct ChatroomView: View {
             .photosPicker(
                 isPresented: $viewModel.showPhotoPicker,
                 selection: $viewModel.photoPickerItems,
-                maxSelectionCount: 6
+                maxSelectionCount: 6,
+                photoLibrary: .shared()
             )
             .safeAreaInset(edge: .bottom) {
                 bottomSafeAreaView()
