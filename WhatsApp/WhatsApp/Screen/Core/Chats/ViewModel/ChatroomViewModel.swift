@@ -89,7 +89,7 @@ final class ChatroomViewModel: ObservableObject {
         case .sendMessage:
             sendMessage()
         case .recordAudio:
-            break
+            toggleAudioRecording()
         }
     }
     
