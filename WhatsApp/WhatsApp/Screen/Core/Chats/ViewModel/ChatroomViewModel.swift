@@ -12,10 +12,10 @@ final class ChatroomViewModel: ObservableObject {
     private(set) var channel: Channel
     @Published var showPhotoPicker = false
     @Published var photoPickerItems: [PhotosPickerItem] = []
-    @Published var selectedPhotos: [UIImage] = []
+    @Published var mediaAttachments: [MediaAttachment] = []
     
     var showPhotoPickerPreview: Bool {
-        !photoPickerItems.isEmpty
+        !mediaAttachments.isEmpty
     }
     
     init(_ channel: Channel) {
@@ -99,11 +99,16 @@ final class ChatroomViewModel: ObservableObject {
     private func parsePhotoPickerItems(_ photoPickerItems: [PhotosPickerItem]) async {
         for photoItem in photoPickerItems {
             if photoItem.isVideo {
-                
+                if let movie = try? await photoItem.loadTransferable(type: VideoPickerTransferable.self),
+                   let thumbnail = try? await movie.url.generateVideoThumbnail() {
+                    let videoAttachment = MediaAttachment(id: UUID().uuidString, type: .video(thumbnail, movie.url))
+                    self.mediaAttachments.insert(videoAttachment, at: 0)
+                }
             } else {
                 guard let data = try? await photoItem.loadTransferable(type: Data.self),
-                      let uiImage = UIImage(data: data) else { return }
-                self.selectedPhotos.insert(uiImage, at: 0)
+                      let thumbnailImage = UIImage(data: data) else { return }
+                let photoAttachment = MediaAttachment(id: UUID().uuidString, type: .photo(thumbnailImage))
+                self.mediaAttachments.insert(photoAttachment, at: 0)
             }
         }
     }
