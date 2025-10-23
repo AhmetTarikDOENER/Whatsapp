@@ -9,7 +9,7 @@ struct MediaAttachmentPreview: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 ForEach(mediaAttachments) { attachment in
-                    if attachment.type == .audio {
+                    if attachment.type == .audio(.stubUrl, 0) {
                         audioAttachmentPreview(attachment)
                     } else {
                         thumbnailImageView(attachment)
@@ -90,7 +90,7 @@ struct MediaAttachmentPreview: View {
             cancelButton(attachment)
         }
         .overlay(alignment: .bottom) {
-            Text("Test mp3 file name here")
+            Text(attachment.fileURL?.absoluteString ?? "Unknown")
                 .lineLimit(1)
                 .font(.caption)
                 .padding(2)

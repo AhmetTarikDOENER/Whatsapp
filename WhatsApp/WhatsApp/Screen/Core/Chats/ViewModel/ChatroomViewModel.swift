@@ -106,7 +106,7 @@ final class ChatroomViewModel: ObservableObject {
     private func createAudioAttachment(from audioURL: URL?, audioDuration: TimeInterval) {
         guard let audioURL else { return }
         let id = UUID().uuidString
-        let audioAttachment = MediaAttachment(id: id, type: .audio)
+        let audioAttachment = MediaAttachment(id: id, type: .audio(audioURL, audioDuration))
         mediaAttachments.insert(audioAttachment, at: 0)
     }
     
@@ -156,6 +156,10 @@ final class ChatroomViewModel: ObservableObject {
             showMediaPlayer(fileURL)
         case .removeItem(let attachment):
             remove(attachment)
+            guard let fileURL = attachment.fileURL else { return }
+            if attachment.type == .audio(.stubUrl, 0) {
+                audioRecorderService.deleteRecording(at: fileURL)
+            }
         }
     }
     

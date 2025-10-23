@@ -74,7 +74,7 @@ final class AudioRecorderService {
         }
     }
     
-    private func deleteRecording(at fileURL: URL) {
+    func deleteRecording(at fileURL: URL) {
         do {
             try FileManager.default.removeItem(at: fileURL)
             print("Deleted recording file at \(fileURL)")
