@@ -7,16 +7,21 @@ typealias ProgressHandler = (Double) -> Void
 
 enum UploadError: Error {
     case failedToUploadImage(_ description: String)
+    case failedToUploadFile(_ description: String)
 }
 
 extension UploadError: LocalizedError {
     var errorDescription: String? {
-        switch self { case .failedToUploadImage(let description): return description }
+        switch self {
+        case .failedToUploadImage(let description), .failedToUploadFile(let description):
+            return description
+        }
     }
 }
 
 struct FirebaseHelper {
     
+    /// For profile images, thumbnails, channel avatars.
     static func uploadImage(
         _ image: UIImage,
         for type: UploadType,
@@ -42,6 +47,30 @@ struct FirebaseHelper {
         }
     }
     
+    /// Responsible for uploading both video and audio files.
+    static func uploadFile(
+        for type: UploadType,
+        fileURL: URL,
+        completion: @escaping UploadCompletion,
+        progressHandler: @escaping ProgressHandler
+    ) {
+        let storageReference = type.filePath
+        let uploadTask = storageReference.putFile(from: fileURL) { _, error in
+            if let error = error {
+                print("Failed to upload file to storage.")
+                completion(.failure(UploadError.failedToUploadFile(error.localizedDescription)))
+                return
+            }
+            
+            storageReference.downloadURL(completion: completion)
+        }
+        
+        uploadTask.observe(.progress) { snaphot in
+            guard let progress = snaphot.progress else { return }
+            let percentage = Double(progress.completedUnitCount / progress.totalUnitCount)
+            progressHandler(percentage)
+        }
+    }
 }
 
 extension FirebaseHelper {
