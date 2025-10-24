@@ -12,6 +12,7 @@ struct MessageItem: Identifiable {
     let thumbnailURL: String?
     var thumbnailHeight: CGFloat?
     var thumbnailWidth: CGFloat?
+    var videoURL: String?
     
     var direction: MessageDirection {
         ownerUid == Auth.auth().currentUser?.uid ? .outgoing : .incoming
@@ -95,6 +96,7 @@ extension MessageItem {
         self.thumbnailURL = dictionary[.thumbnailUrl] as? String ?? nil
         self.thumbnailWidth = dictionary[.thumbnailWidth] as? CGFloat ?? 0
         self.thumbnailHeight = dictionary[.thumbnailHeight] as? CGFloat ?? 0
+        self.videoURL = dictionary[.videoURL] as? String ?? nil
     }
 }
 
@@ -105,4 +107,5 @@ extension String {
     static let text = "text"
     static let thumbnailWidth = "thumbnailWidth"
     static let thumbnailHeight = "thumbnailHeight"
+    static let videoURL = "videoURL"
 }

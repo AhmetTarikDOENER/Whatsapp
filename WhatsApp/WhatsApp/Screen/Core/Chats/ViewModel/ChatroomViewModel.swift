@@ -96,13 +96,13 @@ final class ChatroomViewModel: ObservableObject {
             case .photo:
                 sendPhotoMessage(text: text, attachment)
             case .video:
-                break
+                sendVideoMessage(text: text, attachment)
             case .audio:
                 break
             }
         }
     }
-    
+
     private func sendPhotoMessage(text: String, _ attachment: MediaAttachment) {
         uploadImageToStorage(attachment) { [weak self] imageURL in
             guard let self, let currentUser else { return }
@@ -136,6 +136,48 @@ final class ChatroomViewModel: ObservableObject {
             }
         } progressHandler: { progress in
             print("UPLOAD IMAGE PROGRESS: \(progress)")
+        }
+    }
+    
+    private func sendVideoMessage(text: String, _ attachment: MediaAttachment) {
+        ///Uploads the video file to storage bucket
+        uploadFileToStorage(for: .videoMessage, attachment) { [weak self] videoURL in
+            /// Upload the video thumbnail
+            self?.uploadImageToStorage(attachment) { thumbnailURL in
+                guard let self = self, let currentUser = self.currentUser else { return }
+                let uploadParameter = MessageUploadParameters(
+                    channel: self.channel,
+                    text: text,
+                    type: .video,
+                    attachment: attachment,
+                    thumbnailURL: thumbnailURL.absoluteString,
+                    videoUrl: videoURL.absoluteString,
+                    sender: currentUser
+                )
+                
+                /// Save metadatas and urls to database
+                MessageService.sendMediaMessage(to: self.channel, parameters: uploadParameter) { [weak self] in
+                    self?.scrollToBottom(isAnimated: true)
+                }
+            }
+        }
+    }
+    
+    private func uploadFileToStorage(
+        for uploadType: FirebaseHelper.UploadType,
+        _ attachement: MediaAttachment,
+        completion: @escaping(_ fileURL: URL) -> Void
+    ) {
+        guard let fileToUpload = attachement.fileURL else { return }
+        FirebaseHelper.uploadFile(for: uploadType, fileURL: fileToUpload) { result in
+            switch result {
+            case .success(let fileURL):
+                completion(fileURL)
+            case .failure(let error):
+                print("Failed to upload file to storage: \(error.localizedDescription)")
+            }
+        } progressHandler: { progress in
+            print("UPLOAD FILE PROGRESS: \(progress)")
         }
     }
     
