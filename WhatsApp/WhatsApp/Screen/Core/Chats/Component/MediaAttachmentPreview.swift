@@ -9,7 +9,7 @@ struct MediaAttachmentPreview: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 ForEach(mediaAttachments) { attachment in
-                    if attachment.type == .audio(.stubUrl, 0) {
+                    if attachment.type == .audio(.stubUrl, .stubTimeInterval) {
                         audioAttachmentPreview(attachment)
                     } else {
                         thumbnailImageView(attachment)

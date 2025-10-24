@@ -100,10 +100,13 @@ extension ChatroomView {
                 }
                 Divider()
             }
-                
-            TextInputArea(textMessage: $viewModel.textMessage) { action in
-                viewModel.handleTextInputArea(action)
-            }
+            
+            TextInputArea(
+                textMessage: $viewModel.textMessage,
+                isRecording: $viewModel.isRecordingAudioMessage,
+                elapsedTime: $viewModel.elapsedAudioMessageTime) { action in
+                    viewModel.handleTextInputArea(action)
+                }
         }
     }
 }

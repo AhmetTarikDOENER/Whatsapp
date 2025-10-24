@@ -4,9 +4,10 @@ struct TextInputArea: View {
     
     //  MARK: - Properties
     @Binding var textMessage: String
-    let actionHandler: (_ action: UserAction) -> Void
-    @State private var isRecording = false
+    @Binding var isRecording: Bool
+    @Binding var elapsedTime: TimeInterval
     @State private var isPulsing = false
+    let actionHandler: (_ action: UserAction) -> Void
     
     private var disableSendButton: Bool {
         textMessage.isEmptyOrWhitespace || isRecording
@@ -16,6 +17,10 @@ struct TextInputArea: View {
     var body: some View {
         HStack(alignment: .bottom, spacing: 4) {
             imagePickerButton()
+                .padding(2)
+                .disabled(isRecording)
+                .grayscale(isRecording ? 0.8 : 0)
+            
             audioRecorderButton()
             
             if isRecording {
@@ -33,6 +38,15 @@ struct TextInputArea: View {
         .padding(.top, 12)
         .background(.whatsAppWhite)
         .animation(.spring, value: isRecording)
+        .onChange(of: isRecording) { oldValue, isRecording in
+            if isRecording {
+                withAnimation(.easeInOut(duration: 1.0).repeatForever()) {
+                    isPulsing = true
+                }
+            } else {
+                isPulsing = false
+            }
+        }
     }
     
     //  MARK: - Private
@@ -48,10 +62,6 @@ struct TextInputArea: View {
     private func audioRecorderButton() -> some View {
         Button {
             actionHandler(.recordAudio)
-            isRecording.toggle()
-            withAnimation(.easeInOut(duration: 1.0).repeatForever()) {
-                isPulsing.toggle()
-            }
         } label: {
             Image(systemName: isRecording ? "square.fill" : "mic.fill")
                 .fontWeight(.heavy)
@@ -107,7 +117,7 @@ struct TextInputArea: View {
             
             Spacer()
             
-            Text("00:01")
+            Text(elapsedTime.formatElapsedTime)
                 .font(.callout)
                 .fontWeight(.semibold)
         }
@@ -132,7 +142,7 @@ extension TextInputArea {
 }
 
 #Preview {
-    TextInputArea(textMessage: .constant("")) { action in 
+    TextInputArea(textMessage: .constant(""), isRecording: .constant(false), elapsedTime: .constant(0)) { action in
         
     }
 }

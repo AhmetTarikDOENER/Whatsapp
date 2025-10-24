@@ -15,6 +15,8 @@ final class ChatroomViewModel: ObservableObject {
     @Published var photoPickerItems: [PhotosPickerItem] = []
     @Published var mediaAttachments: [MediaAttachment] = []
     @Published var videoPlayerState: (show: Bool, player: AVPlayer?) = (false, nil)
+    @Published var isRecordingAudioMessage = false
+    @Published var elapsedAudioMessageTime: TimeInterval = 0
     private let audioRecorderService = AudioRecorderService()
     
     var showPhotoPickerPreview: Bool {
@@ -25,12 +27,14 @@ final class ChatroomViewModel: ObservableObject {
         self.channel = channel
         listenToAuthState()
         onPhotoPickerSelection()
+        setupAudioRecorderListeners()
     }
     
     deinit {
         subscriptions.forEach { $0.cancel() }
         subscriptions.removeAll()
         currentUser = nil
+        audioRecorderService.tearDown()
     }
     
     private func listenToAuthState() {
@@ -48,6 +52,18 @@ final class ChatroomViewModel: ObservableObject {
                 break
             }
         }.store(in: &subscriptions)
+    }
+    
+    private func setupAudioRecorderListeners() {
+        audioRecorderService.$isRecording.receive(on: DispatchQueue.main)
+            .sink { [weak self] isRecording in
+                self?.isRecordingAudioMessage = isRecording
+            }.store(in: &subscriptions)
+        
+        audioRecorderService.$elapsedTime.receive(on: DispatchQueue.main)
+            .sink { [weak self] elapsedTime in
+                self?.elapsedAudioMessageTime = elapsedTime
+            }.store(in: &subscriptions)
     }
     
     func sendMessage() {
@@ -113,7 +129,8 @@ final class ChatroomViewModel: ObservableObject {
     private func onPhotoPickerSelection() {
         $photoPickerItems.sink { [weak self] photoItems in
             guard let self else { return }
-            self.mediaAttachments.removeAll()
+            let audioRecordings = mediaAttachments.filter({ $0.type == .audio(.stubUrl, .stubTimeInterval) })
+            self.mediaAttachments = audioRecordings
             Task { await self.parsePhotoPickerItems(photoItems) }
         }.store(in: &subscriptions)
     }
@@ -157,7 +174,7 @@ final class ChatroomViewModel: ObservableObject {
         case .removeItem(let attachment):
             remove(attachment)
             guard let fileURL = attachment.fileURL else { return }
-            if attachment.type == .audio(.stubUrl, 0) {
+            if attachment.type == .audio(.stubUrl, .stubTimeInterval) {
                 audioRecorderService.deleteRecording(at: fileURL)
             }
         }

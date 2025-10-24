@@ -5,10 +5,14 @@ import Combine
 final class AudioRecorderService {
     
     private var audioRecorder: AVAudioRecorder?
-    private(set) var isRecording = false
     private var startTime: Date?
     private var timer: AnyCancellable?
-    private var elapsedTime: Double = 0
+    @Published private(set) var elapsedTime: Double = 0
+    @Published private(set) var isRecording = false
+    
+    deinit {
+        tearDown()
+    }
     
     func startRecording() {
         let audioSession = AVAudioSession.sharedInstance()
@@ -61,6 +65,7 @@ final class AudioRecorderService {
     }
     
     func tearDown() {
+        if isRecording { stopRecording() }
         let fileManager = FileManager.default
         let folder = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let folderContents = try! fileManager.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil)
