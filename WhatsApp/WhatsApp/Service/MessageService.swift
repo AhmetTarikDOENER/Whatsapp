@@ -45,6 +45,34 @@ struct MessageService {
             print("Failed to get messages for \(channel.title)")
         }
     }
+    
+    static func sendMediaMessage(to channel: Channel, parameters: MessageUploadParameters, completion: @escaping () -> Void) {
+        guard let messageId = FirebaseConstants.MessagesReference.childByAutoId().key else { return }
+        let timestamp = Date().timeIntervalSince1970
+        
+        let channelDictionary: [String: Any] = [
+            .lastMessage: parameters.text,
+            .lastMessageTimestamp: timestamp,
+            .lastMessageType: parameters.type.title
+        ]
+        
+        var messageDictionary: [String: Any] = [
+            .text: parameters.text,
+            .type: parameters.type.title,
+            .timestamp: timestamp,
+            .ownerUid: parameters.ownerUid,
+        ]
+        
+        /// Photo Messages
+        messageDictionary[.thumbnailUrl] = parameters.thumbnailURL ?? nil
+        messageDictionary[.thumbnailWidth] = parameters.thumbnailWidth ?? nil
+        messageDictionary[.thumbnailHeight] = parameters.thumbnailHeight ?? nil
+        
+        FirebaseConstants.ChannelsReference.child(channel.id).updateChildValues(channelDictionary)
+        FirebaseConstants.MessagesReference.child(channel.id).child(messageId).setValue(messageDictionary)
+        
+        completion()
+    }
 }
 
 struct MessageUploadParameters {
@@ -52,11 +80,23 @@ struct MessageUploadParameters {
     let text: String
     let type: MessageType
     let attachment: MediaAttachment
-    var thumbnail: String?
+    var thumbnailURL: String?
     var videoUrl: String?
     var sender: User
     var audioUrl: String?
     var audioDuration: TimeInterval?
     
+    var ownerUid: String {
+        sender.uid
+    }
     
+    var thumbnailWidth: CGFloat? {
+        guard type == .photo || type == .video else { return nil }
+        return attachment.thumbnail.size.width
+    }
+    
+    var thumbnailHeight: CGFloat? {
+        guard type == .photo || type == .video else { return nil }
+        return attachment.thumbnail.size.height
+    }
 }

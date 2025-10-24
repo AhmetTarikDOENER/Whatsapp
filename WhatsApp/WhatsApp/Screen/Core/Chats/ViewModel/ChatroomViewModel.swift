@@ -72,14 +72,57 @@ final class ChatroomViewModel: ObservableObject {
     
     func sendMessage() {
         guard let currentUser else { return }
-        MessageService.sendTextMessage(
-            to: channel,
-            from: currentUser,
-            textMessage) {
-                [weak self] in
+        if mediaAttachments.isEmpty {
+            MessageService.sendTextMessage(to: channel, from: currentUser, textMessage) { [weak self] in
                 self?.textMessage = ""
-                print("MessageService is sending")
             }
+        } else {
+            sendMultipleMediaMessages(textMessage, attachments: mediaAttachments)
+        }
+    }
+    
+    private func sendMultipleMediaMessages(_ text: String, attachments: [MediaAttachment]) {
+        mediaAttachments.forEach { attachment in
+            switch attachment.type {
+            case .photo:
+                sendPhotoMessage(text: text, attachment)
+            case .video:
+                break
+            case .audio:
+                break
+            }
+        }
+    }
+    
+    private func sendPhotoMessage(text: String, _ attachment: MediaAttachment) {
+        uploadImageToStorage(attachment) { [weak self] imageURL in
+            guard let self, let currentUser else { return }
+            let uploadParameters = MessageUploadParameters(
+                channel: channel,
+                text: text,
+                type: .photo,
+                attachment: attachment,
+                thumbnailURL: imageURL.absoluteString,
+                sender: currentUser,
+            )
+            
+            MessageService.sendMediaMessage(to: channel, parameters: uploadParameters) {
+                
+            }
+        }
+    }
+    
+    private func uploadImageToStorage(_ attachement: MediaAttachment, completion: @escaping(_ imageURL: URL) -> Void) {
+        FirebaseHelper.uploadImage(attachement.thumbnail, for: .photoMessage) { result in
+            switch result {
+            case .success(let imageURL):
+                completion(imageURL)
+            case .failure(let error):
+                print("Failed to upload image to storage: \(error.localizedDescription)")
+            }
+        } progressHandler: { progress in
+            print("UPLOAD IMAGE PROGRESS: \(progress)")
+        }
     }
     
     private func getMessages() {

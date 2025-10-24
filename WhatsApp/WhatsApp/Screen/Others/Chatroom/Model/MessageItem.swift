@@ -9,6 +9,7 @@ struct MessageItem: Identifiable {
     let ownerUid: String
     let timestamp: Date
     var sender: User?
+    let thumbnailURL: String?
     var direction: MessageDirection {
         ownerUid == Auth.auth().currentUser?.uid ? .outgoing : .incoming
     }
@@ -45,7 +46,7 @@ extension MessageItem {
         text: "Hey Jen! How're you today?",
         messageType: .text,
         ownerUid: "1",
-        timestamp: Date()
+        timestamp: Date(), thumbnailURL: nil
     )
     
     static let receivedPlaceholder = MessageItem(
@@ -54,14 +55,14 @@ extension MessageItem {
         text: "Hey John! Doing great😀, what about you?",
         messageType: .text,
         ownerUid: "2",
-        timestamp: Date()
+        timestamp: Date(), thumbnailURL: nil
     )
     
     static let stubMessages: [MessageItem] = [
-        .init(id: UUID().uuidString, isGroupChat: true, text: "Hi, There!", messageType: .text, ownerUid: "1", timestamp: Date()),
-        .init(id: UUID().uuidString, isGroupChat: false, text: "Check this photo", messageType: .photo, ownerUid: "2", timestamp: Date()),
-        .init(id: UUID().uuidString, isGroupChat: true, text: "Watch this video", messageType: .video, ownerUid: "3", timestamp: Date()),
-        .init(id: UUID().uuidString, isGroupChat: false, text: "Listen to this", messageType: .audio, ownerUid: "4", timestamp: Date()),
+        .init(id: UUID().uuidString, isGroupChat: true, text: "Hi, There!", messageType: .text, ownerUid: "1", timestamp: Date(), thumbnailURL: nil),
+        .init(id: UUID().uuidString, isGroupChat: false, text: "Check this photo", messageType: .photo, ownerUid: "2", timestamp: Date(), thumbnailURL: nil),
+        .init(id: UUID().uuidString, isGroupChat: true, text: "Watch this video", messageType: .video, ownerUid: "3", timestamp: Date(), thumbnailURL: nil),
+        .init(id: UUID().uuidString, isGroupChat: false, text: "Listen to this", messageType: .audio, ownerUid: "4", timestamp: Date(), thumbnailURL: nil),
     ]
 }
 
@@ -75,6 +76,7 @@ extension MessageItem {
         self.ownerUid = dictionary[.ownerUid] as? String ?? ""
         let timeInterval = dictionary[.timestamp] as? TimeInterval ?? 0
         self.timestamp = Date(timeIntervalSince1970: timeInterval)
+        self.thumbnailURL = dictionary[.thumbnailUrl] as? String ?? nil
     }
 }
 
@@ -83,4 +85,6 @@ extension String {
     static let timestamp = "timestamp"
     static let ownerUid = "ownerUid"
     static let text = "text"
+    static let thumbnailWidth = "thumbnailWidth"
+    static let thumbnailHeight = "thumbnailHeight"
 }
