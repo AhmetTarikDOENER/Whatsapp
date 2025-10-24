@@ -8,4 +8,5 @@ enum FirebaseConstants {
     static let MessagesReference = DatabaseReference.child("channel-messages")
     static let UserChannelsReference = DatabaseReference.child("user-channels")
     static let UserDirectChannels = DatabaseReference.child("user-direct-channels")
+    static let StorageReference = Storage.storage().reference()
 }
