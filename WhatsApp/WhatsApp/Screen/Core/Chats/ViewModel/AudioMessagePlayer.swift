@@ -15,14 +15,20 @@ final class AudioMessagePlayer: ObservableObject {
     }
     
     func playAudio(from url: URL) {
-        currentURL = url
-        let playerItem = AVPlayerItem(url: url)
-        self.playerItem = playerItem
-        player = AVPlayer(playerItem: playerItem)
-        player?.play()
-        playbackState = .playing
-        observeCurrentPlayerTime()
-        observeEndOfPlayback()
+        if let currentURL, currentURL == url {
+            /// Resumes a previous message which already playing
+            resumePlaying()
+        } else {
+            /// Plays voice message
+            currentURL = url
+            let playerItem = AVPlayerItem(url: url)
+            self.playerItem = playerItem
+            player = AVPlayer(playerItem: playerItem)
+            player?.play()
+            playbackState = .playing
+            observeCurrentPlayerTime()
+            observeEndOfPlayback()
+        }
     }
     
     func pauseAudio() {
@@ -35,6 +41,7 @@ final class AudioMessagePlayer: ObservableObject {
         let targetTime = CMTime(seconds: timeInterval, preferredTimescale: 1)
         player.seek(to: targetTime)
     }
+    
     
     //  MARK: - Private
     private func observeCurrentPlayerTime() {
@@ -52,6 +59,13 @@ final class AudioMessagePlayer: ObservableObject {
         ) { [weak self] _ in
             self?.stopAudio()
             print("observeEndOfPlayback")
+        }
+    }
+    
+    private func resumePlaying() {
+        if playbackState == .paused || playbackState == .stopped {
+            player?.play()
+            playbackState = .playing
         }
     }
     
