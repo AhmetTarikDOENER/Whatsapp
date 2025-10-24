@@ -10,6 +10,9 @@ struct MessageItem: Identifiable {
     let timestamp: Date
     var sender: User?
     let thumbnailURL: String?
+    var thumbnailHeight: CGFloat?
+    var thumbnailWidth: CGFloat?
+    
     var direction: MessageDirection {
         ownerUid == Auth.auth().currentUser?.uid ? .outgoing : .incoming
     }
@@ -36,6 +39,19 @@ struct MessageItem: Identifiable {
     }
     var trailingPadding: CGFloat {
         direction == .incoming ? horizontalPadding : 0
+    }
+    
+    var imageSize: CGSize {
+        let photoWidth = thumbnailWidth ?? 0
+        let photoHeight = thumbnailHeight ?? 0
+        let imageHeight = CGFloat(photoHeight / photoWidth * imageWidth)
+        
+        return CGSize(width: imageWidth, height: imageHeight)
+    }
+    
+    var imageWidth: CGFloat {
+        let photoWidth = (UIWindowScene.currentWindowScene?.screenWidth ?? 0) / 1.5
+        return photoWidth
     }
 }
 
@@ -77,6 +93,8 @@ extension MessageItem {
         let timeInterval = dictionary[.timestamp] as? TimeInterval ?? 0
         self.timestamp = Date(timeIntervalSince1970: timeInterval)
         self.thumbnailURL = dictionary[.thumbnailUrl] as? String ?? nil
+        self.thumbnailWidth = dictionary[.thumbnailWidth] as? CGFloat ?? 0
+        self.thumbnailHeight = dictionary[.thumbnailHeight] as? CGFloat ?? 0
     }
 }
 

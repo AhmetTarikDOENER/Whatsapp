@@ -16,7 +16,7 @@ struct BubbleImageView: View {
                     .offset(y: 2)
             }
             
-            messageTextView()
+            messageImageView()
                 .shadow(
                     color: Color(.systemGray3).opacity(0.1),
                     radius: 5,
@@ -51,13 +51,13 @@ extension BubbleImageView {
         }
     }
     
-    private func messageTextView() -> some View {
+    private func messageImageView() -> some View {
         VStack(alignment: .leading, spacing: 0) {
             KFImage(URL(string: item.thumbnailURL ?? ""))
                 .resizable()
                 .placeholder { ProgressView() }
                 .scaledToFill()
-                .frame(width: 220, height: 180)
+                .frame(width: item.imageSize.width, height: item.imageSize.height)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .background {
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -76,7 +76,7 @@ extension BubbleImageView {
                 Text(item.text)
                     .padding([.horizontal, .bottom], 8)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .frame(width: 220)
+                    .frame(width: item.imageSize.width)
             }
         }
         .background(item.backgroundColor)
