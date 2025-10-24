@@ -21,9 +21,10 @@ enum MessageType {
     
     init?(_ stringValue: String) {
         switch stringValue {
-        case .text: self = .text
+        case "text": self = .text
         case "photo": self = .photo
         case "video": self = .video
+        case "audio": self = .audio
         default:
             if let adminMessageType = AdminMessageType(rawValue: stringValue) {
                 self = .admin(adminMessageType)

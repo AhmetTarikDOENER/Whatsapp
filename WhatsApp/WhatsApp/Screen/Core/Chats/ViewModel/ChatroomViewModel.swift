@@ -98,7 +98,7 @@ final class ChatroomViewModel: ObservableObject {
             case .video:
                 sendVideoMessage(text: text, attachment)
             case .audio:
-                break
+                sendAudioMessage(text: text, attachment)
             }
         }
     }
@@ -178,6 +178,27 @@ final class ChatroomViewModel: ObservableObject {
             }
         } progressHandler: { progress in
             print("UPLOAD FILE PROGRESS: \(progress)")
+        }
+    }
+    
+    private func sendAudioMessage(text: String, _ attachment: MediaAttachment) {
+        ///Uploads the audio file to storage bucket
+        guard let audioDuration = attachment.audioDuration, let currentUser else { return }
+        uploadFileToStorage(for: .audioMessage, attachment) { [weak self] fileURL in
+            guard let self else { return }
+            let uploadParameter = MessageUploadParameters(
+                channel: self.channel,
+                text: text,
+                type: .audio,
+                attachment: attachment,
+                sender: currentUser,
+                audioURL: fileURL.absoluteString,
+                audioDuration: audioDuration
+            )
+            
+            MessageService.sendMediaMessage(to: self.channel, parameters: uploadParameter) {
+                self.scrollToBottom(isAnimated: true)
+            }
         }
     }
     
