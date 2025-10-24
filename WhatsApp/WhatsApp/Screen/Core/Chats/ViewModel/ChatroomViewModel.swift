@@ -23,6 +23,10 @@ final class ChatroomViewModel: ObservableObject {
         !mediaAttachments.isEmpty || !photoPickerItems.isEmpty
     }
     
+    var disableSendButton: Bool {
+        mediaAttachments.isEmpty && textMessage.isEmpty
+    }
+    
     init(_ channel: Channel) {
         self.channel = channel
         listenToAuthState()

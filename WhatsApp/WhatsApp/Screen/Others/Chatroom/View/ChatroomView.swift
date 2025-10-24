@@ -104,9 +104,11 @@ extension ChatroomView {
             TextInputArea(
                 textMessage: $viewModel.textMessage,
                 isRecording: $viewModel.isRecordingAudioMessage,
-                elapsedTime: $viewModel.elapsedAudioMessageTime) { action in
-                    viewModel.handleTextInputArea(action)
-                }
+                elapsedTime: $viewModel.elapsedAudioMessageTime,
+                disableSendButton: viewModel.disableSendButton
+            ) { action in
+                viewModel.handleTextInputArea(action)
+            }
         }
     }
 }
