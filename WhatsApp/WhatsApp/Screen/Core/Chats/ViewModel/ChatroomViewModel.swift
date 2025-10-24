@@ -17,6 +17,7 @@ final class ChatroomViewModel: ObservableObject {
     @Published var videoPlayerState: (show: Bool, player: AVPlayer?) = (false, nil)
     @Published var isRecordingAudioMessage = false
     @Published var elapsedAudioMessageTime: TimeInterval = 0
+    @Published var scrollToBottomRequest: (scroll: Bool, isAnimated: Bool) = (false, false)
     private let audioRecorderService = AudioRecorderService()
     
     var showPhotoPickerPreview: Bool {
@@ -115,9 +116,14 @@ final class ChatroomViewModel: ObservableObject {
             )
             
             MessageService.sendMediaMessage(to: channel, parameters: uploadParameters) {
-                
+                self.scrollToBottom(isAnimated: true)
             }
         }
+    }
+    
+    private func scrollToBottom(isAnimated: Bool) {
+        scrollToBottomRequest.scroll = true
+        scrollToBottomRequest.isAnimated = isAnimated
     }
     
     private func uploadImageToStorage(_ attachement: MediaAttachment, completion: @escaping(_ imageURL: URL) -> Void) {
