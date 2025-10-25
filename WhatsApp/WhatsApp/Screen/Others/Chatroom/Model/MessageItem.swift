@@ -56,6 +56,8 @@ struct MessageItem: Identifiable {
         let photoWidth = (UIWindowScene.currentWindowScene?.screenWidth ?? 0) / 1.5
         return photoWidth
     }
+    
+    var audioDurationString: String { audioDuration?.formatElapsedTime ?? "00:00" }
 }
 
 extension MessageItem {

@@ -9,6 +9,7 @@ struct BubbleAudioView: View {
     @EnvironmentObject private var audioMessagePlayer: AudioMessagePlayer
     @State private var playbackState: AudioMessagePlayer.PlaybackState = .stopped
     @State private var playbackTime = "00:00"
+    @State private var isDraggingSlider = false
     
     var body: some View {
         HStack(alignment: .bottom, spacing: 4) {
@@ -20,11 +21,21 @@ struct BubbleAudioView: View {
             HStack {
                 playButton()
                 
-                Slider(value: $sliderValue, in: sliderRange)
-                    .tint(.gray)
+                Slider(value: $sliderValue, in: sliderRange) { editing in
+                    isDraggingSlider = editing
+                    if !editing {
+                        audioMessagePlayer.seek(to: sliderValue)
+                    }
+                }
+                .tint(.gray)
                 
-                Text("03:00")
-                    .foregroundStyle(.gray)
+                if playbackState == .stopped {
+                    Text(item.audioDurationString)
+                        .foregroundStyle(.gray)
+                } else {
+                    Text(playbackTime)
+                        .foregroundStyle(.gray)
+                }
             }
             .padding(8)
             .background(Color.gray.opacity(0.1))
@@ -101,6 +112,7 @@ private extension BubbleAudioView {
     }
     
     private func observe(to currentTime: CMTime) {
+        guard !isDraggingSlider else { return }
         playbackTime = currentTime.seconds.formatElapsedTime
         sliderValue = currentTime.seconds
     }
