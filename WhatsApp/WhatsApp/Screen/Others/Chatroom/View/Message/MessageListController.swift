@@ -17,7 +17,7 @@ final class MessageListController: UIViewController {
         let section = NSCollectionLayoutSection.list(using: listConfiguration, layoutEnvironment: layoutEnvironment)
         section.contentInsets.leading = 0
         section.contentInsets.trailing = 0
-        section.interGroupSpacing = 0
+        section.interGroupSpacing = -10
         
         return section
     }
@@ -33,8 +33,15 @@ final class MessageListController: UIViewController {
         collectionView.keyboardDismissMode = .onDrag
         collectionView.backgroundColor = .clear
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellIdentifier)
+        collectionView.refreshControl = pullToRefresh
         
         return collectionView
+    }()
+    
+    private lazy var pullToRefresh: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        return refreshControl
     }()
     
     private let backgroundImageView: UIImageView = {
@@ -99,6 +106,10 @@ final class MessageListController: UIViewController {
                 }
             }.store(in: &subscriptions)
     }
+    
+    @objc private func refreshData() {
+        messagesCollectionView.refreshControl?.endRefreshing()
+    }
 }
 
 private extension UICollectionView {
@@ -155,10 +166,6 @@ extension MessageListController: UICollectionViewDelegate, UICollectionViewDataS
             guard let videoURLString = message.videoURL,
                   let videoURL = URL(string: videoURLString) else { return }
             viewModel.showMediaPlayer(videoURL)
-        case .audio:
-            guard let audioURLString = message.audioURL,
-                  let audioURL = URL(string: audioURLString) else { return }
-            viewModel.showMediaPlayer(audioURL)
         default:
             break
         }
