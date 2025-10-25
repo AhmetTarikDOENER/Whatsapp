@@ -4,11 +4,11 @@ import AVFoundation
 final class AudioMessagePlayer: ObservableObject {
     
     private var player: AVPlayer?
-    private var playerItem: AVPlayerItem?
     private var currentURL: URL?
-    @Published private(set) var playbackState: PlaybackState = .stopped
-    private var currentTime = CMTime.zero
     private var currentTimeObserver: Any?
+    @Published private(set) var playerItem: AVPlayerItem?
+    @Published private(set) var playbackState: PlaybackState = .stopped
+    @Published private(set) var currentTime = CMTime.zero
     
     deinit {
         tearDown()
