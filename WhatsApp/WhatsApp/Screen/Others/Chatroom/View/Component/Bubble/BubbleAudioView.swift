@@ -3,13 +3,23 @@ import AVKit
 
 struct BubbleAudioView: View {
     
-    let item: MessageItem
+    private let item: MessageItem
     @State private var sliderValue: Double = 0
-    @State private var sliderRange: ClosedRange<Double> = 0...20
+    @State private var sliderRange: ClosedRange<Double>
     @EnvironmentObject private var audioMessagePlayer: AudioMessagePlayer
     @State private var playbackState: AudioMessagePlayer.PlaybackState = .stopped
     @State private var playbackTime = "00:00"
     @State private var isDraggingSlider = false
+    
+    init(item: MessageItem) {
+        self.item = item
+        let audioDuration = item.audioDuration ?? 20
+        self._sliderRange = State(wrappedValue: 0...audioDuration)
+    }
+    
+    private var isCorrectAudioMessage: Bool {
+        audioMessagePlayer.currentURL?.absoluteString == item.audioURL
+    }
     
     var body: some View {
         HStack(alignment: .bottom, spacing: 4) {
@@ -23,7 +33,7 @@ struct BubbleAudioView: View {
                 
                 Slider(value: $sliderValue, in: sliderRange) { editing in
                     isDraggingSlider = editing
-                    if !editing {
+                    if !editing && isCorrectAudioMessage {
                         audioMessagePlayer.seek(to: sliderValue)
                     }
                 }
@@ -63,11 +73,6 @@ struct BubbleAudioView: View {
             guard audioMessagePlayer.currentURL?.absoluteString == item.audioURL else { return }
             observe(to: currentTime)
         }
-        .onReceive(audioMessagePlayer.$playerItem) { playerItem in
-            guard audioMessagePlayer.currentURL?.absoluteString == item.audioURL else { return }
-            guard let audioDuration = item.audioDuration else { return }
-            sliderRange = 0...audioDuration
-        }
     }
     
     private func playButton() -> some View {
@@ -102,12 +107,14 @@ private extension BubbleAudioView {
     }
     
     private func observePlaybackState(_ state: AudioMessagePlayer.PlaybackState) {
-        if state == .stopped {
+        switch state {
+        case .stopped:
             playbackState = .stopped
             sliderValue = 0
-        } else {
-            guard audioMessagePlayer.currentURL?.absoluteString == item.audioURL else { return }
-            playbackState = state
+        case .playing, .paused:
+            if isCorrectAudioMessage {
+                playbackState = state
+            }
         }
     }
     
