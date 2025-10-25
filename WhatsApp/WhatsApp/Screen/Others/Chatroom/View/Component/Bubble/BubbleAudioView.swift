@@ -5,6 +5,7 @@ struct BubbleAudioView: View {
     let item: MessageItem
     @State private var sliderValue: Double = 0
     @State private var sliderRange: ClosedRange<Double> = 0...20
+    @EnvironmentObject private var audioMessagePlayer: AudioMessagePlayer
     
     var body: some View {
         HStack(alignment: .bottom, spacing: 4) {
@@ -45,7 +46,9 @@ struct BubbleAudioView: View {
     
     private func playButton() -> some View {
         Button {
-            
+            guard let audioMessageURLString = item.audioURL,
+                  let audioMessageURL = URL(string: audioMessageURLString) else { return }
+            audioMessagePlayer.playAudio(from: audioMessageURL)
         } label: {
             Image(systemName: "play.fill")
                 .padding(12)

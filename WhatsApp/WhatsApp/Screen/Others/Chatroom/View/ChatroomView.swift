@@ -6,6 +6,7 @@ struct ChatroomView: View {
     //  MARK: - Properties
     let channel: Channel
     @StateObject private var viewModel: ChatroomViewModel
+    @StateObject private var audioMessagePlayer = AudioMessagePlayer()
     
     //  MARK: - Initializer
     init(channel: Channel) {
@@ -40,6 +41,7 @@ struct ChatroomView: View {
                     }
                 }
             }
+            .environmentObject(audioMessagePlayer)
     }
 }
 
