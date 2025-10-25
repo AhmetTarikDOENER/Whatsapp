@@ -6,7 +6,7 @@ final class AudioMessagePlayer: ObservableObject {
     private var player: AVPlayer?
     private var playerItem: AVPlayerItem?
     private var currentURL: URL?
-    private var playbackState: PlaybackState = .stopped
+    @Published private(set) var playbackState: PlaybackState = .stopped
     private var currentTime = CMTime.zero
     private var currentTimeObserver: Any?
     
@@ -47,7 +47,6 @@ final class AudioMessagePlayer: ObservableObject {
     private func observeCurrentPlayerTime() {
         currentTimeObserver = player?.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1), queue: DispatchQueue.main) { [weak self] time in
             self?.currentTime = time
-            print("observeCurrentPlayerTime: \(time)")
         }
     }
     

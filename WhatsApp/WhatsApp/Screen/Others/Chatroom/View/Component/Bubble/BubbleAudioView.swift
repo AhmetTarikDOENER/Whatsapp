@@ -6,6 +6,7 @@ struct BubbleAudioView: View {
     @State private var sliderValue: Double = 0
     @State private var sliderRange: ClosedRange<Double> = 0...20
     @EnvironmentObject private var audioMessagePlayer: AudioMessagePlayer
+    @State private var playbackState: AudioMessagePlayer.PlaybackState = .stopped
     
     var body: some View {
         HStack(alignment: .bottom, spacing: 4) {
@@ -42,13 +43,14 @@ struct BubbleAudioView: View {
         .frame(maxWidth: .infinity, alignment: item.alignment)
         .padding(.leading, item.leadingPadding)
         .padding(.trailing, item.trailingPadding)
+        .onReceive(audioMessagePlayer.$playbackState) { state in
+            observePlaybackState(state)
+        }
     }
     
     private func playButton() -> some View {
         Button {
-            guard let audioMessageURLString = item.audioURL,
-                  let audioMessageURL = URL(string: audioMessageURLString) else { return }
-            audioMessagePlayer.playAudio(from: audioMessageURL)
+            handlePlayAudioMessage()
         } label: {
             Image(systemName: "play.fill")
                 .padding(12)
@@ -62,6 +64,28 @@ struct BubbleAudioView: View {
         Text("12:34")
             .font(.footnote)
             .foregroundStyle(.gray)
+    }
+}
+
+//  MARK: - BubbleAudioView+PlaybackState
+private extension BubbleAudioView {
+    private func handlePlayAudioMessage() {
+        if playbackState == .stopped || playbackState == .paused {
+            guard let audioMessageURLString = item.audioURL,
+                  let audioMessageURL = URL(string: audioMessageURLString) else { return }
+            audioMessagePlayer.playAudio(from: audioMessageURL)
+        } else {
+            audioMessagePlayer.pauseAudio()
+        }
+    }
+    
+    private func observePlaybackState(_ state: AudioMessagePlayer.PlaybackState) {
+        if state == .stopped {
+            playbackState = .stopped
+            sliderValue = 0
+        } else {
+            playbackState = state
+        }
     }
 }
 
