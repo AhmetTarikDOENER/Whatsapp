@@ -49,9 +49,11 @@ struct BubbleAudioView: View {
             observePlaybackState(state)
         }
         .onReceive(audioMessagePlayer.$currentTime) { currentTime in
+            guard audioMessagePlayer.currentURL?.absoluteString == item.audioURL else { return }
             observe(to: currentTime)
         }
         .onReceive(audioMessagePlayer.$playerItem) { playerItem in
+            guard audioMessagePlayer.currentURL?.absoluteString == item.audioURL else { return }
             guard let audioDuration = item.audioDuration else { return }
             sliderRange = 0...audioDuration
         }
@@ -61,7 +63,7 @@ struct BubbleAudioView: View {
         Button {
             handlePlayAudioMessage()
         } label: {
-            Image(systemName: "play.fill")
+            Image(systemName: playbackState.icon)
                 .padding(12)
                 .background(item.direction == .incoming ? .green : .white)
                 .clipShape(Circle())
@@ -93,6 +95,7 @@ private extension BubbleAudioView {
             playbackState = .stopped
             sliderValue = 0
         } else {
+            guard audioMessagePlayer.currentURL?.absoluteString == item.audioURL else { return }
             playbackState = state
         }
     }
