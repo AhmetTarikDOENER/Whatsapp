@@ -88,7 +88,7 @@ struct BubbleAudioView: View {
     }
     
     private func timestampView() -> some View {
-        Text("12:34")
+        Text(item.timestamp.formatToTime)
             .font(.footnote)
             .foregroundStyle(.gray)
     }

@@ -6,22 +6,22 @@ final class MessageListController: UIViewController {
     
     //  MARK: - Properties
     private let cellIdentifier = "MessageListControllerCell"
-    private lazy var tableView: UITableView = {
-        let table = UITableView()
-        table.delegate = self
-        table.dataSource = self
-        table.separatorStyle = .none
-        table.backgroundColor = UIColor.gray.withAlphaComponent(0.4)
-        table.translatesAutoresizingMaskIntoConstraints = false
-        table.contentInset = .init(top: 0, left: 0, bottom: 60, right: 0)
-        table.scrollIndicatorInsets = .init(top: 0, left: 0, bottom: 60, right: 0)
-        table.keyboardDismissMode = .onDrag
-        
-        return table
-    }()
-    
     private let viewModel: ChatroomViewModel
     private var subscriptions = Set<AnyCancellable>()
+    
+    private lazy var messagesCollectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.selfSizingInvalidation = .enabledIncludingConstraints
+        collectionView.scrollIndicatorInsets = .init(top: 0, left: 0, bottom: 60, right: 0)
+        collectionView.contentInset = .init(top: 0, left: 0, bottom: 60, right: 0)
+        collectionView.keyboardDismissMode = .onDrag
+        collectionView.backgroundColor = .clear
+        
+        return collectionView
+    }()
     
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView(image: .chatbackground)
@@ -43,7 +43,7 @@ final class MessageListController: UIViewController {
     //  MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.backgroundColor = .clear
+        messagesCollectionView.backgroundColor = .clear
         view.backgroundColor = .clear
         setupViews()
         setupMessageListeners()
