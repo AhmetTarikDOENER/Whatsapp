@@ -31,4 +31,27 @@ extension Date {
         
         return dateFormatter.string(from: self)
     }
+    
+    var relativeDateString: String {
+        let calender = Calendar.current
+        if calender.isDateInToday(self) {
+            return "Today"
+        } else if calender.isDateInYesterday(self) {
+            return "Yesterday"
+        } else if isCurrentWeek {
+            return toString(format: "EEEE") /// Wednesday
+        } else if isCurrentYear {
+            return toString(format: "E, MMM d") /// Wed, Jan 29
+        } else {
+            return toString(format: "MMM dd, yyyy") /// Wed, Jan 29, 2025
+        }
+    }
+    
+    private var isCurrentWeek: Bool {
+        Calendar.current.isDate(self, equalTo: Date(), toGranularity: .weekday)
+    }
+    
+    private var isCurrentYear: Bool {
+        Calendar.current.isDate(self, equalTo: Date(), toGranularity: .year)
+    }
 }
